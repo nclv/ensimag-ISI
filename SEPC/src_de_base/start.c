@@ -22,8 +22,8 @@ void kernel_start(void) {
     // quand on saura gerer l'ecran, on pourra afficher x
     (void)x;
 
-    efface_ecran();
-    ecrit_car(0, 0, 'A', 0xFF, 0x00);
+    init_terminal();
+    terminal_writestring("Hello");
 
     // uint8_t *ptr = (uint8_t *)0xB8000;
     // *ptr = 'H';
