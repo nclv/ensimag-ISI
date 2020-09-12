@@ -1,21 +1,20 @@
-#include "console.h"
-
+#include <console.h>
+#include <cpu.h>
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "cpu.h"
-#include "vga.h"
+#include <vga.h>
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
-static volatile uint16_t *const VGA_MEMORY_START = (volatile uint16_t *)0xB8000;
+static uint16_t *const VGA_MEMORY_START = (uint16_t *)0xB8000;
 
-static uint8_t terminal_color;
-static volatile uint16_t *terminal_buffer;
-static size_t terminal_lig;
-static size_t terminal_col;
+// TODO: Create a console struct
+static uint8_t console_color;
+static uint16_t *console_buffer;
+static size_t console_lig;
+static size_t console_col;
 
 /**
  * Renvoie un pointeur sur la case mémoire correspondant aux coordonnées fournies.
@@ -29,59 +28,67 @@ static size_t terminal_col;
 // }
 
 /**
- * Ecrit le caractère c aux coordonnées spécifiées
+ * Ecrit le caractère aux coordonnées spécifiées
  * 
- * @pre terminal_buffer doit pointer sur VGA_MEMORY_START
+ * @pre console_buffer doit pointer sur VGA_MEMORY_START
  * 
  * @param lig ligne,
  * @param col colonne,
  * @param uc caractère à écrire sur la case correspondant à la ligne et à la colonne
  */
-void write_char(const unsigned char uc, uint32_t lig, uint32_t col, uint8_t color) {
+static void write_char(const unsigned char uc, uint32_t lig, uint32_t col, uint8_t color) {
     const size_t index = lig * VGA_WIDTH + col;
-    terminal_buffer[index] = vga_case(uc, color);
+    console_buffer[index] = vga_case(uc, color);
 }
 
 /** 
- * Effacement des caractères à l'écran
+ * Effacement des caractères sur la console.
  * 
- * @pre terminal_buffer doit pointer sur VGA_MEMORY_START
+ * @pre console_buffer doit pointer sur VGA_MEMORY_START
  * 
  * Functional if your discard volatile keyword:
- * uint16_t *terminal_buffer = (uint16_t *)VGA_MEMORY_START;
- * memset(terminal_buffer, 0, VGA_WIDTH * VGA_HEIGHT * 2);
- */
-void clear(void) {
-    for (size_t lig = 0; lig < VGA_HEIGHT; lig++) {
-        for (size_t col = 0; col < VGA_WIDTH; col++) {
-            write_char(' ', lig, col, terminal_color);
+ * console_buffer = VGA_MEMORY_START;
+ * memset(console_buffer, 0, VGA_WIDTH * VGA_HEIGHT * 2);
+ * 
+ * Functional
+ * for (size_t lig = 0; lig < VGA_HEIGHT; lig++) {
+       for (size_t col = 0; col < VGA_WIDTH; col++) {
+            write_char(' ', lig, col, console_color);
         }
     }
-    terminal_lig = 0;
-    terminal_col = 0;
+ */
+void clear_console(void) {
+    for (size_t lig = 0; lig < VGA_HEIGHT; lig++) {
+        for (size_t col = 0; col < VGA_WIDTH; col++) {
+            write_char(' ', lig, col, console_color);
+        }
+    }
+
+    console_lig = 0;
+    console_col = 0;
 }
 
 /**
- * Initialise le terminal: couleur, pointeur d'entrée et clear
+ * Initialise la console: couleur, pointeur d'entrée et clear.
  * 
  */
-void init_terminal(void) {
-    terminal_color = vga_color_byte(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-    terminal_buffer = VGA_MEMORY_START;
-    clear();
+void init_console(void) {
+    console_color = vga_color_byte(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+    console_buffer = VGA_MEMORY_START;
+    clear_console();
 }
 
 /**
- * Place le curseur à la position donnée
+ * Place le curseur à la position donnée.
  * 
  * @param lig ligne,
  * @param col colonne,
  */
-void place_curseur(uint32_t lig, uint32_t col) {
+static void place_curseur(uint32_t lig, uint32_t col) {
     uint16_t pos = lig * VGA_WIDTH + col;
 
-    const unsigned short COMMAND_PORT = 0x3D4;
-    const unsigned short DATA_PORT = 0x3D5;
+    static const unsigned short COMMAND_PORT = 0x3D4;
+    static const unsigned short DATA_PORT = 0x3D5;
 
     // indique à la carte que l’on va envoyer la partie basse de la position du curseur
     outb(0x0F, COMMAND_PORT);
@@ -94,55 +101,65 @@ void place_curseur(uint32_t lig, uint32_t col) {
 }
 
 /**
- * Affiche le caractère à l'écran
+ * Fait défiler le texte sur la console.
+ */
+static void console_scroll(void) {
+    memmove(console_buffer, console_buffer + 80 * 2, 80 * 25 * 2);
+}
+
+/**
+ * Affiche le caractère sur la console.
+ * 
+ * @pre console_col, console_lig and console_color are set in a call to init_console()
  * 
  * @param c caractère à écrire,
  */
-void handle_char(char c) {
+static void handle_char(char c) {
     const unsigned char uc = c;
 
     switch (uc) {
         case '\n':
-            terminal_col = 0;
-            terminal_lig++;
+            console_col = 0;
+            console_lig++;
             break;
         case '\b':
-            if (terminal_col != 0) terminal_col--;
+            if (console_col != 0) console_col--;
             break;
         case '\t':
-            terminal_col = (terminal_col + 8) / 8 * 8;
-            if (terminal_col >= VGA_WIDTH) {
-                ++terminal_lig;
-                terminal_col = 0;
+            console_col = (console_col + 8) / 8 * 8;
+            if (console_col >= VGA_WIDTH) {
+                ++console_lig;
+                console_col = 0;
             }
             break;
         case '\f':
-            clear();
+            clear_console();
             break;
         case '\r':
-            terminal_col = 0;
+            console_col = 0;
             break;
         default:
-            write_char(uc, terminal_lig, terminal_col, terminal_color);
+            write_char(uc, console_lig, console_col, console_color);
+            if (++console_col == VGA_WIDTH) {
+                console_col = 0;
+                if (++console_lig == VGA_HEIGHT) {
+                    console_lig = 0;
+                    console_scroll();
+                }
+            }
             break;
     }
-    if (++terminal_col == VGA_WIDTH) {
-        terminal_col = 0;
-        if (++terminal_lig == VGA_HEIGHT)
-            terminal_lig = 0;
-    }
-    place_curseur(terminal_lig, terminal_col);
+    place_curseur(console_lig, console_col);
 }
 
-void terminal_write(const char *data, size_t size) {
-    for (size_t i = 0; i < size; i++)
+/**
+ * Ecrit data sur l'écran.
+ * 
+ * @pre console_col, console_lig and console_color are set in a call to init_console()
+ * 
+ * @param c caractère à écrire,
+ */
+void console_putbytes(const char *data, int len) {
+    for (int i = 0; i < len; i++)
         handle_char(data[i]);
 }
-
-void terminal_writestring(const char *data) {
-    terminal_write(data, strlen(data));
-}
-
-void defilement(void);
-
-void console_putbytes(const char *s, int len);
