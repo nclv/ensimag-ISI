@@ -23,8 +23,13 @@ void kernel_start(void) {
     (void)x;
 
     init_terminal();
-    terminal_writestring("Hello");
-
+    terminal_writestring("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
+    terminal_writestring("\fa clean one");
+    terminal_writestring("\nA\tB\tC\tD\tE\tF\tG\tH\tI\tJ\tK\tYEESSS");
+    terminal_writestring("\nohohoh\t");
+    // terminal_writestring("\nohoh\b\baaaaaahhhh");
+    // terminal_writestring("\nohohoh\raaaaaahhhh");
+    
     // uint8_t *ptr = (uint8_t *)0xB8000;
     // *ptr = 'H';
     // *(ptr + 1) = 'E';
