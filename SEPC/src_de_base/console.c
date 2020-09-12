@@ -6,8 +6,18 @@
 #include <string.h>
 #include <vga.h>
 
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
+
+#define VGA_WIDTH (80)
+#define VGA_HEIGHT (25)
+
+/** Plutôt que de définir VGA_MEMORY_START dans un #define, on garde une constante
+ * C'est nécessaire pour faire passer un pointeur.
+ * Cela permet d'avoir un symbole dans la table du debugger.
+ * On peut l'utiliser pour initialiser des variables statiques.
+ * On a le contrôle du type.
+ */
+// static const size_t VGA_WIDTH = 80;
+// static const size_t VGA_HEIGHT = 25;
 static uint16_t *const VGA_MEMORY_START = (uint16_t *)0xB8000;
 
 // TODO: Create a console struct
