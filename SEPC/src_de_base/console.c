@@ -11,6 +11,14 @@
 #define VGA_WIDTH (80)
 #define VGA_HEIGHT (25)
 
+/* The I/O ports */
+#define VGA_COMMAND_PORT (0x3D4)
+#define VGA_DATA_PORT (0x3D5)
+
+/* The I/O port commands */
+#define VGA_HIGH_BYTE_COMMAND (0x0E)
+#define VGA_LOW_BYTE_COMMAND (0x0F)
+
 /** Plutôt que de définir VGA_MEMORY_START dans un #define, on garde une constante
  * C'est nécessaire pour faire passer un pointeur.
  * Cela permet d'avoir un symbole dans la table du debugger.
@@ -19,7 +27,7 @@
  */
 // static const size_t VGA_WIDTH = 80;
 // static const size_t VGA_HEIGHT = 25;
-static uint16_t *const VGA_MEMORY_START = (uint16_t *)0xB8000;
+static volatile uint16_t *const VGA_MEMORY_START = (uint16_t *)0x000B8000;
 
 // TODO: Create a console struct
 static uint8_t console_color;
@@ -59,14 +67,7 @@ static void write_char(const unsigned char uc, uint32_t lig, uint32_t col, uint8
  * 
  * Functional if your discard volatile keyword:
  * console_buffer = VGA_MEMORY_START;
- * memset(console_buffer, 0, VGA_WIDTH * VGA_HEIGHT * 2);
- * 
- * Functional
- * for (size_t lig = 0; lig < VGA_HEIGHT; lig++) {
-       for (size_t col = 0; col < VGA_WIDTH; col++) {
-            write_char(' ', lig, col, console_color);
-        }
-    }
+ * memset(console_buffer, 0, VGA_WIDTH * VGA_HEIGHT * sizeof *uint16_t);
  */
 void clear_console(void) {
     for (size_t lig = 0; lig < VGA_HEIGHT; lig++) {
@@ -85,7 +86,7 @@ void clear_console(void) {
  */
 void init_console(void) {
     console_color = vga_color_byte(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-    console_buffer = VGA_MEMORY_START;
+    console_buffer = (uint16_t *)VGA_MEMORY_START;
     clear_console();
 }
 
@@ -98,21 +99,20 @@ void init_console(void) {
 static void place_curseur(uint32_t lig, uint32_t col) {
     uint16_t pos = lig * VGA_WIDTH + col;
 
-    static const unsigned short COMMAND_PORT = 0x3D4;
-    static const unsigned short DATA_PORT = 0x3D5;
-
     // indique à la carte que l’on va envoyer la partie basse de la position du curseur
-    outb(0x0F, COMMAND_PORT);
+    outb(VGA_LOW_BYTE_COMMAND, VGA_COMMAND_PORT);
     // envoie cette partie basse sur le port de données
-    outb((uint8_t)(pos & 0xFF), DATA_PORT);
+    outb((uint8_t)(pos & 0xFF), VGA_DATA_PORT);
     // signaler l'envoie de la partie haute
-    outb(0x0E, COMMAND_PORT);
+    outb(VGA_HIGH_BYTE_COMMAND, VGA_COMMAND_PORT);
     // envoyer la partie haute
-    outb((uint8_t)((pos >> 8) & 0xFF), DATA_PORT);
+    outb((uint8_t)((pos >> 8) & 0xFF), VGA_DATA_PORT);
 }
 
 /**
  * Fait défiler le texte sur la console.
+ * 
+ * @pre console_lig = 24 and console_col = 0
  */
 static void console_scroll(void) {
     /** 
