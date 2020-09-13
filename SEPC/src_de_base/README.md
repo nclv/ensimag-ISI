@@ -11,6 +11,7 @@ Terminal 2
 gdb kernel.bin
 target remote:1234  # Pair with the OS
 b kernel_start
+bt
 c
 (s|n|display)
 ```

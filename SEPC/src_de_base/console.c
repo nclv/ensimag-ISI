@@ -1,11 +1,12 @@
-#include <console.h>
-#include <cpu.h>
+#include "console.h"
+
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <vga.h>
 
+#include "cpu.h"
+#include "vga.h"
 
 #define VGA_WIDTH (80)
 #define VGA_HEIGHT (25)
@@ -114,7 +115,18 @@ static void place_curseur(uint32_t lig, uint32_t col) {
  * Fait défiler le texte sur la console.
  */
 static void console_scroll(void) {
-    memmove(console_buffer, console_buffer + 80 * 2, 80 * 25 * 2);
+    /** 
+     * Use with console_lig = 24 in handle_char()
+     * Append text at the bottom
+     */
+    memmove(console_buffer, console_buffer + VGA_WIDTH,
+            (VGA_WIDTH - 1) * VGA_HEIGHT * sizeof *console_buffer);
+    // Or with a loop
+    // for (int i = 0; i < VGA_HEIGHT; i++) {
+    //     for (int m = 0; m < VGA_WIDTH; m++) {
+    //         console_buffer[i * VGA_WIDTH + m] = console_buffer[(i + 1) * VGA_WIDTH + m];
+    //     }
+    // }
 }
 
 /**
@@ -129,19 +141,33 @@ static void handle_char(char c) {
 
     switch (uc) {
         case '\n':
+            for (size_t col = console_col; col < VGA_WIDTH; col++) {
+                write_char(' ', console_lig, col, console_color);
+            }
             console_col = 0;
-            console_lig++;
+            if (++console_lig == VGA_HEIGHT) {
+                console_lig = 24;
+                console_scroll();
+            }
             break;
         case '\b':
             if (console_col != 0) console_col--;
             break;
-        case '\t':
-            console_col = (console_col + 8) / 8 * 8;
+        case '\t': {
+            size_t next_tab_col = (console_col + 8) / 8 * 8;
+            for (size_t col = console_col; col < next_tab_col; col++) {
+                write_char(' ', console_lig, col, console_color);
+            }
+            console_col = next_tab_col;
             if (console_col >= VGA_WIDTH) {
-                ++console_lig;
                 console_col = 0;
+                if (++console_lig == VGA_HEIGHT) {
+                    console_lig = 24;
+                    console_scroll();
+                }
             }
             break;
+        }
         case '\f':
             clear_console();
             break;
@@ -153,12 +179,13 @@ static void handle_char(char c) {
             if (++console_col == VGA_WIDTH) {
                 console_col = 0;
                 if (++console_lig == VGA_HEIGHT) {
-                    console_lig = 0;
+                    console_lig = 24;
                     console_scroll();
                 }
             }
             break;
     }
+
     place_curseur(console_lig, console_col);
 }
 
