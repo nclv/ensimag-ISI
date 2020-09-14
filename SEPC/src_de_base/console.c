@@ -130,6 +130,18 @@ static void console_scroll(void) {
 }
 
 /**
+ * Placer les coordonnées du curseur sur une nouvelle ligne.
+ * Défilement du texte si besoin.
+ */ 
+static void new_line(void) {
+    console_col = 0;
+    if (++console_lig == VGA_HEIGHT) {
+        console_lig = 24;
+        console_scroll();
+    }
+}
+
+/**
  * Affiche le caractère sur la console.
  * 
  * @pre console_col, console_lig and console_color are set in a call to init_console()
@@ -144,11 +156,7 @@ static void handle_char(char c) {
             for (size_t col = console_col; col < VGA_WIDTH; col++) {
                 write_char(' ', console_lig, col, console_color);
             }
-            console_col = 0;
-            if (++console_lig == VGA_HEIGHT) {
-                console_lig = 24;
-                console_scroll();
-            }
+            new_line();
             break;
         case '\b':
             if (console_col != 0) console_col--;
@@ -160,11 +168,7 @@ static void handle_char(char c) {
             }
             console_col = next_tab_col;
             if (console_col >= VGA_WIDTH) {
-                console_col = 0;
-                if (++console_lig == VGA_HEIGHT) {
-                    console_lig = 24;
-                    console_scroll();
-                }
+                new_line();
             }
             break;
         }
@@ -177,11 +181,7 @@ static void handle_char(char c) {
         default:
             write_char(uc, console_lig, console_col, console_color);
             if (++console_col == VGA_WIDTH) {
-                console_col = 0;
-                if (++console_lig == VGA_HEIGHT) {
-                    console_lig = 24;
-                    console_scroll();
-                }
+                new_line();
             }
             break;
     }
