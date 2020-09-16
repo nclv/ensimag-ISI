@@ -38,22 +38,22 @@
         : "0"(src), "1"(dest), "2"(n)    \
         : "memory", "cc")
 
-static void __inline__ cli(void) {
+static __inline__ void cli(void) {
     __asm__ __volatile__("cli" ::
                              : "memory");
 }
 
-static void __inline__ sti(void) {
+static __inline__ void sti(void) {
     __asm__ __volatile__("sti" ::
                              : "memory");
 }
 
-static void __inline__ hlt(void) {
+static __inline__ void hlt(void) {
     __asm__ __volatile__("hlt" ::
                              : "memory");
 }
 
-static unsigned long __inline__ save_flags(void) {
+static __inline__ unsigned long save_flags(void) {
     unsigned long flags;
 
     __asm__ __volatile__(
@@ -66,7 +66,7 @@ static unsigned long __inline__ save_flags(void) {
     return flags;
 }
 
-static void __inline__ restore_flags(unsigned long flags) {
+static __inline__ void restore_flags(unsigned long flags) {
     __asm__ __volatile__(
         "pushl	%0\n"
         "\tpopfl\n"
@@ -75,25 +75,25 @@ static void __inline__ restore_flags(unsigned long flags) {
         : "memory");
 }
 
-static void __inline__ outb(unsigned char value, unsigned short port) {
+static __inline__ void outb(unsigned char value, unsigned short port) {
     __asm__ __volatile__("outb %0, %1"
                          :
                          : "a"(value), "Nd"(port));
 }
 
-static void __inline__ outw(unsigned short value, unsigned short port) {
+static __inline__ void outw(unsigned short value, unsigned short port) {
     __asm__ __volatile__("outw %0, %1"
                          :
                          : "a"(value), "Nd"(port));
 }
 
-static void __inline__ outl(unsigned long value, unsigned short port) {
+static __inline__ void outl(unsigned long value, unsigned short port) {
     __asm__ __volatile__("outl %0, %1"
                          :
                          : "a"(value), "Nd"(port));
 }
 
-static unsigned char __inline__ inb(unsigned short port) {
+static __inline__ unsigned char inb(unsigned short port) {
     unsigned char rega;
     __asm__ __volatile__("inb %1,%0"
                          : "=a"(rega)
@@ -101,7 +101,7 @@ static unsigned char __inline__ inb(unsigned short port) {
     return rega;
 }
 
-static unsigned short __inline__ inw(unsigned short port) {
+static __inline__ unsigned short inw(unsigned short port) {
     unsigned short rega;
     __asm__ __volatile__("inw %1,%0"
                          : "=a"(rega)
@@ -109,7 +109,7 @@ static unsigned short __inline__ inw(unsigned short port) {
     return rega;
 }
 
-static unsigned long __inline__ inl(unsigned short port) {
+static __inline__ unsigned long inl(unsigned short port) {
     unsigned long rega;
     __asm__ __volatile__("inl %1,%0"
                          : "=a"(rega)

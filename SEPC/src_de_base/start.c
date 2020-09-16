@@ -50,7 +50,7 @@ void kernel_start(void) {
     printf("9\n0\n1\n2\n3\n4");
     printf("\t\t\t\tYeahhh\t1\t2\t3\t4\t5\t6");
     printf("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
-    
+
     // uint8_t *ptr = (uint8_t *)0xB8000;
     // *ptr = 'H';
     // *(ptr + 1) = 'E';

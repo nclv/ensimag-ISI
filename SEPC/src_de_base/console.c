@@ -97,7 +97,7 @@ void init_console(void) {
  * @param col colonne,
  */
 static void place_curseur(uint32_t lig, uint32_t col) {
-    uint16_t pos = lig * VGA_WIDTH + col;
+    uint16_t pos = (uint16_t)(lig * VGA_WIDTH + col);
 
     // indique à la carte que l’on va envoyer la partie basse de la position du curseur
     outb(VGA_LOW_BYTE_COMMAND, VGA_COMMAND_PORT);
@@ -149,7 +149,7 @@ static void new_line(void) {
  * @param c caractère à écrire,
  */
 static void handle_char(char c) {
-    const unsigned char uc = c;
+    const unsigned char uc = (unsigned char)c;
 
     switch (uc) {
         case '\n':
