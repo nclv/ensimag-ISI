@@ -65,8 +65,9 @@ public class Rational {
 
     /**
      * Sets the numerator, then simplifies the rational.
+     * 
      * @param n new numerator value
-     */	
+     */
     public void setNum(int n) {
         this.numerator = n;
         reduce();
@@ -74,9 +75,10 @@ public class Rational {
 
     /**
      * Sets the denominator, then simplifies the rational.
+     * 
      * @param denominator new denominator value
-     * @throws ArithmeticException if d is zero 
-     */	
+     * @throws ArithmeticException if d is zero
+     */
     public void setDenom(int denominator) {
         if (denominator == 0) {
             throw new ArithmeticException("Division by zero...");
@@ -100,24 +102,18 @@ public class Rational {
      */
     public Rational mult(Rational b) {
         Rational a = this;
-
-        // reduce p1/q2 and p2/q1, then multiply, where a = p1/q1 and b = p2/q2
-        Rational c = new Rational(a.numerator, b.denominator);
-        Rational d = new Rational(b.numerator, a.denominator);
-
-        return new Rational(c.numerator * d.numerator, c.denominator * d.denominator);
+        return mult(a, b);
         // OR
         // return new Rational(this.numerator * b.numerator, this.denominator *
         // b.denominator);
     }
 
     /**
-     * Multiplies two rationals, then returns the result.
-     * This a class method, used this way:
-     *     Rational res = Rational.mult(a, b); 
+     * Multiplies two rationals, then returns the result. This a class method, used
+     * this way: Rational res = Rational.mult(a, b);
      */
     public static Rational mult(Rational a, Rational b) {
-    	Rational c = new Rational(a.numerator, b.denominator);
+        Rational c = new Rational(a.numerator, b.denominator);
         Rational d = new Rational(b.numerator, a.denominator);
 
         return new Rational(c.numerator * d.numerator, c.denominator * d.denominator);

@@ -17,6 +17,8 @@ public class Vector {
     protected int rationalCount;
     protected static final int INITIAL_CAPACITY = 10;
 
+    
+
     /**
      * s The amount the Vector's internal array should be increased in size when a
      * new element is added that exceeds the current size of the array, or when
@@ -171,18 +173,20 @@ public class Vector {
     // return string representation of (this)
     public String toString() {
         String s = "(";
-        for (Rational rational : rationals) {
-            s += rational + ", ";
+        for (int i = 0; i < this.rationalCount; ++i) {
+            s += this.rationals[i] + ", ";
         }
         return s + ")";
     }
 
     public static void main(String[] args) {
-        Rational[] rationals = { new Rational(1, 2), new Rational(2, 3) };
+        Rational a = new Rational(1, 2);
+        Rational b = new Rational(3, 2);
+        Rational[] rationals = { a, b };
         Vector vect = new Vector(rationals);
         System.out.println(vect);
         System.out.println(vect.size());
         System.out.println(vect.capacity());
-        System.out.println(vect.contains(new Rational(1, 2)));
+        System.out.println(vect.contains(a));
     }
 }
