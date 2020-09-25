@@ -1,3 +1,9 @@
+# Useful links
+
+ - [The little book about OS development](https://littleosbook.github.io/)
+ - [OSDev Tutorial Page](https://wiki.osdev.org/Tutorials)
+ - [Kernel Code Source Example](https://github.com/tehybel/osdev/tree/hardware/kern)
+
 # Workflow
 
 Terminal 1
