@@ -7,17 +7,10 @@
 
 #include "cpu.h"
 #include "vga.h"
+#include "io.h"
 
 #define VGA_WIDTH (80)
 #define VGA_HEIGHT (25)
-
-/* The I/O ports */
-#define VGA_COMMAND_PORT (0x3D4)
-#define VGA_DATA_PORT (0x3D5)
-
-/* The I/O port commands */
-#define VGA_HIGH_BYTE_COMMAND (0x0E)
-#define VGA_LOW_BYTE_COMMAND (0x0F)
 
 /** Plutôt que de définir VGA_MEMORY_START dans un #define, on garde une constante
  * C'est nécessaire pour faire passer un pointeur.
@@ -95,18 +88,12 @@ void init_console(void) {
  * 
  * @param lig ligne,
  * @param col colonne,
+ *
+ * @pre set_cursor function from io.h
  */
 static void place_curseur(uint32_t lig, uint32_t col) {
     uint16_t pos = (uint16_t)(lig * VGA_WIDTH + col);
-
-    // indique à la carte que l’on va envoyer la partie basse de la position du curseur
-    outb(VGA_LOW_BYTE_COMMAND, VGA_COMMAND_PORT);
-    // envoie cette partie basse sur le port de données
-    outb((uint8_t)(pos & 0xFF), VGA_DATA_PORT);
-    // signaler l'envoie de la partie haute
-    outb(VGA_HIGH_BYTE_COMMAND, VGA_COMMAND_PORT);
-    // envoyer la partie haute
-    outb((uint8_t)((pos >> 8) & 0xFF), VGA_DATA_PORT);
+    set_cursor(pos);
 }
 
 /**
@@ -194,9 +181,25 @@ static void handle_char(char c) {
  * 
  * @pre console_col, console_lig and console_color are set in a call to init_console()
  * 
- * @param c caractère à écrire,
+ * @param data chaîne de caractères à écrire,
+ * @param len longueur de la chaîne de caractères,
  */
 void console_putbytes(const char *data, int len) {
     for (int i = 0; i < len; i++)
         handle_char(data[i]);
+}
+
+/**
+ * Ecrit data sur l'écran.
+ * 
+ * @pre console_col, console_lig and console_color are set in a call to init_console()
+ * 
+ * @param data chaîne de caractères à écrire,
+ */
+void console_write(const char *data) {
+    size_t i = 0;
+    while (data[i] != '\0') {
+        handle_char(data[i]);
+        i++;
+    }
 }

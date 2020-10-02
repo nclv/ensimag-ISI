@@ -6,6 +6,7 @@
  * have to implement it in the kernel and in the user program.
  */
 extern void console_putbytes(const char *data, int len);
+extern void console_write(const char *data);
 extern void init_console(void);
 extern void clear_console(void);
 

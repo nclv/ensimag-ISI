@@ -17,7 +17,7 @@ LD = ld
 OBJCOPY = objcopy
 QEMU = /usr/bin/qemu-system-i386
 
-CFLAGS = -m32 -Werror -g -gstabs -std=c99 -nostdinc -ffreestanding -fpic -fno-stack-protector -I.
+CFLAGS = -m32 -Wall -Werror -g -gstabs -std=c99 -nostdlib -nostdinc -ffreestanding -fpic -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -I.
 ASFLAGS = -m32 -DASSEMBLER -g -gstabs -I.
 LDFLAGS = -melf_i386
 # QEMUOPTS = -no-kvm -net nic -net user,tftp="`pwd`",bootfile="$(PXE)" -boot n -cpu pentium -rtc base=localtime -m 64M -gdb tcp::1234 -S
