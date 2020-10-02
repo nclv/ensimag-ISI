@@ -1,9 +1,9 @@
 #include "console.h"
 
-#include <inttypes.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
+#include "inttypes.h"
+#include "stddef.h"
+#include "stdio.h"
+#include "string.h"
 
 #include "cpu.h"
 #include "vga.h"

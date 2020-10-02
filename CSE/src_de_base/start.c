@@ -60,7 +60,11 @@ void kernel_start(void) {
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
-        // cette fonction arrete le processeur
+        /* 
+            La fonction hlt() est définie dans cpu.h: elle a pour effet d’endormir le processeur (pour économiser de l’énergie). 
+            Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
+            démasquées avant d’appeler cette fonction.
+        */
         hlt();
     }
 }
