@@ -9,6 +9,7 @@
 Terminal 1
 ```bash
 make
+export DISPLAY=0:0  # WSL
 make run  # Launch qemu
 ```
 

@@ -1,28 +1,14 @@
 #include "console.h"
+#include "idt.h"
 #include "cpu.h"
 #include <inttypes.h>
 #include <stdio.h>
 
-// on peut s'entrainer a utiliser GDB avec ce code de base
-// par exemple afficher les valeurs de x, n et res avec la commande display
-
-// une fonction bien connue
-uint32_t fact(uint32_t n) {
-    uint32_t res;
-    if (n <= 1) {
-        res = 1;
-    } else {
-        res = fact(n - 1) * n;
-    }
-    return res;
-}
+void init_clock(void);
 
 void kernel_start(void) {
-    uint32_t x = fact(5);
-    // quand on saura gerer l'ecran, on pourra afficher x
-    (void)x;
 
-    init_console();
+    /*init_console();
     printf("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
     // printf("\fa clean one");
     printf("\nA\tB\tC\tD\tE\tF\tG\tH\tI\tJ\tK\tYEESSS");
@@ -31,7 +17,7 @@ void kernel_start(void) {
     printf("\nohohoh\raaaaaahhhh");
     // clear_console();
     const char* string= "Hello there";
-    printf("My string: %s\n5!: %u\n", string, x);
+    printf("My string: %s\n", string);
     printf("\rAA");
 
     clear_console();
@@ -50,6 +36,23 @@ void kernel_start(void) {
     printf("9\n0\n1\n2\n3\n4");
     printf("\t\t\t\tYeahhh\t1\t2\t3\t4\t5\t6");
     printf("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
+    */
+    init_console();
+
+    printf("Initialisation de l'horloge programmable:  ");
+    init_clock();
+    console_write_color("Success\n", 0);
+
+    printf("Demasquage de l'IRQ0 (clock):  ");
+    masque_IRQ(32, 0);
+    console_write_color("Success\n", 0);
+
+    printf("Initialisation de la table des vecteurs d'interruption:  ");
+    init_idt();
+    console_write_color("Success\n", 0);
+
+    char hour[] = "00:00:00";
+    console_write_hour(hour);
 
     // uint8_t *ptr = (uint8_t *)0xB8000;
     // *ptr = 'H';
@@ -65,6 +68,7 @@ void kernel_start(void) {
             Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
             démasquées avant d’appeler cette fonction.
         */
+        sti();
         hlt();
     }
 }
