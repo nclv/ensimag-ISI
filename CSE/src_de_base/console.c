@@ -12,6 +12,8 @@
 #define VGA_WIDTH (80)
 #define VGA_HEIGHT (25)
 
+#define HOUR_LEN (8)
+
 /** Plutôt que de définir VGA_MEMORY_START dans un #define, on garde une constante
  * C'est nécessaire pour faire passer un pointeur.
  * Cela permet d'avoir un symbole dans la table du debugger.
@@ -24,6 +26,7 @@ static volatile uint16_t *const VGA_MEMORY_START = (uint16_t *)0x000B8000;
 
 // TODO: Create a console struct
 static uint8_t console_color;
+static uint8_t default_console_color;
 static uint16_t *console_buffer;
 static size_t console_lig;
 static size_t console_col;
@@ -79,6 +82,7 @@ void clear_console(void) {
  */
 void init_console(void) {
     console_color = vga_color_byte(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+    default_console_color = console_color;
     console_buffer = (uint16_t *)VGA_MEMORY_START;
     clear_console();
 }
@@ -131,7 +135,7 @@ static void new_line(void) {
 /**
  * Affiche le caractère sur la console.
  * 
- * @pre console_col, console_lig and console_color are set in a call to init_console()
+ * @pre console_col, console_lig, console_color and default_console_color are set in a call to init_console()
  * 
  * @param c caractère à écrire,
  */
@@ -140,6 +144,7 @@ static void handle_char(char c) {
 
     switch (uc) {
         case '\n':
+            console_color = default_console_color;
             for (size_t col = console_col; col < VGA_WIDTH; col++) {
                 write_char(' ', console_lig, col, console_color);
             }
@@ -149,6 +154,7 @@ static void handle_char(char c) {
             if (console_col != 0) console_col--;
             break;
         case '\t': {
+            console_color = default_console_color;
             size_t next_tab_col = (console_col + 8) / 8 * 8;
             for (size_t col = console_col; col < next_tab_col; col++) {
                 write_char(' ', console_lig, col, console_color);
@@ -179,7 +185,7 @@ static void handle_char(char c) {
 /**
  * Ecrit data sur l'écran.
  * 
- * @pre console_col, console_lig and console_color are set in a call to init_console()
+ * @pre console_col, console_lig, console_color and default_console_color are set in a call to init_console()
  * 
  * @param data chaîne de caractères à écrire,
  * @param len longueur de la chaîne de caractères,
@@ -192,7 +198,7 @@ void console_putbytes(const char *data, int len) {
 /**
  * Ecrit data sur l'écran.
  * 
- * @pre console_col, console_lig and console_color are set in a call to init_console()
+ * @pre console_col, console_lig, console_color and default_console_color are set in a call to init_console()
  * 
  * @param data chaîne de caractères à écrire,
  */
@@ -202,4 +208,44 @@ void console_write(const char *data) {
         handle_char(data[i]);
         i++;
     }
+}
+
+/**
+ * Ecrit data en couleur sur l'écran.
+ * 
+ * @pre console_col, console_lig, console_color and default_console_color are set in a call to init_console()
+ * 
+ * @param data chaîne de caractères à écrire,
+ * @param color_type 0:Success:GREEN, ...
+ */
+void console_write_color(const char *data, int color_type) {
+    uint8_t color;
+    switch (color_type) {
+        case 0:
+            color = vga_color_byte(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+            break;
+        default:
+            color = vga_color_byte(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+            break;
+    }
+
+    console_color = color;
+    console_write(data);
+    console_color = default_console_color;
+}
+
+/**
+ * Ecrit l'heure sur la console en haut à droite
+ *
+ * @param hour heure au format hh:mm:ss
+ */
+void console_write_hour(const char hour[HOUR_LEN]) {
+    size_t i = 0;
+    uint8_t col = VGA_WIDTH - HOUR_LEN;
+    while (hour[i] != '\0') {
+        write_char(hour[i], 0, col + i, console_color);
+        place_curseur(0, col + i + 1);
+        i++;
+    }
+    place_curseur(console_lig, console_col);
 }
