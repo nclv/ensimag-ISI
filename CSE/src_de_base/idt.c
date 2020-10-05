@@ -13,7 +13,6 @@
 #include "idt.h"
 
 #include "console.h"
-#include "cpu.h"
 #include "inttypes.h"
 #include "io.h"
 #include "segment.h"
