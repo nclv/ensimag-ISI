@@ -26,7 +26,6 @@
 #define IDT_BASE (0x1000)
 
 static idt_ptr_t idt_ptr;
-// static idt_entry_t idt[256];
 
 /*
  * Initialisation de la table des vecteurs d’interruption
@@ -58,9 +57,6 @@ inline void init_idt(void) {
     /* Initialisation de l'idt */
     idt_ptr.base = (uint16_t)IDT_BASE;
     idt_ptr.limit = NUM_IDT_ENTRIES * sizeof(idt_entry_t) - 1;
-
-    /* Suppression de l'adresse mémoire des interrupt handlers dans la table */
-    // memset(&idt, 0, sizeof *idt);
 
     /* Construction de la table */
     init_idt_entry(32, traitant_IT_32);  // 32, irq0
