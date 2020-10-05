@@ -1,13 +1,13 @@
-#include "console.h"
-#include "idt.h"
-#include "cpu.h"
 #include <inttypes.h>
 #include <stdio.h>
+
+#include "console.h"
+#include "cpu.h"
+#include "idt.h"
 
 void init_clock(void);
 
 void kernel_start(void) {
-
     /*init_console();
     printf("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
     // printf("\fa clean one");
@@ -39,27 +39,24 @@ void kernel_start(void) {
     */
     init_console();
 
+    // cli(); // désactivation/masquage de toutes les interruptions externes
+
     printf("Initialisation de l'horloge programmable:  ");
     init_clock();
-    console_write_color("Success\n", 0);
-
-    printf("Demasquage de l'IRQ0 (clock):  ");
-    masque_IRQ(32, 0);
     console_write_color("Success\n", 0);
 
     printf("Initialisation de la table des vecteurs d'interruption:  ");
     init_idt();
     console_write_color("Success\n", 0);
 
-    char hour[] = "00:00:00";
-    console_write_hour(hour);
+    printf("Demasquage de l'IRQ0 (clock):  ");
+    masque_IRQ(32, 0);
+    console_write_color("Success\n", 0);
 
-    // uint8_t *ptr = (uint8_t *)0xB8000;
-    // *ptr = 'H';
-    // *(ptr + 1) = 'E';
-    // *(ptr + 2) = 'L';
-    // *(ptr + 3) = 'L';
-    // *(ptr + 4) = 'O';
+    // char hour[] = "00:00:00";
+    // console_write_hour(hour);
+
+    sti();  // activation/démasquage des interruptions externes
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
@@ -68,7 +65,6 @@ void kernel_start(void) {
             Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
             démasquées avant d’appeler cette fonction.
         */
-        sti();
         hlt();
     }
 }
@@ -76,4 +72,4 @@ void kernel_start(void) {
 int main(void) {
     kernel_start();
     return 0;
-} 
+}
