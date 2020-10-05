@@ -1,13 +1,12 @@
 #include "console.h"
 
+#include "cpu.h"
 #include "inttypes.h"
+#include "io.h"
 #include "stddef.h"
 #include "stdio.h"
 #include "string.h"
-
-#include "cpu.h"
 #include "vga.h"
-#include "io.h"
 
 #define VGA_WIDTH (80)
 #define VGA_HEIGHT (25)
@@ -123,7 +122,7 @@ static void console_scroll(void) {
 /**
  * Placer les coordonnées du curseur sur une nouvelle ligne.
  * Défilement du texte si besoin.
- */ 
+ */
 static void new_line(void) {
     console_col = 0;
     if (++console_lig == VGA_HEIGHT) {

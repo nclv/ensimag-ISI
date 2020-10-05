@@ -9,7 +9,7 @@
 #define PIC1_COMMAND_PORT (0x20)
 #define PIC1_DATA_PORT (0x21)
 // See https://wiki.osdev.org/Programmable_Interval_Timer
-#define PIT_CHANNEL_0_DATA_PORT (0x40)  // (read/write)
+#define PIT_CHANNEL_0_DATA_PORT (0x40)   // (read/write)
 #define PIT_MODECOMMAND_REGISTER (0x43)  // (write only, a read is ignored)
 
 /* The I/O port commands */
@@ -52,7 +52,7 @@ inline void clear_IRQ_mask(uint32_t num_IRQ) {
 }
 
 inline void init_clock(void) {
-	outb(PIT_ONE_SHOT_MODE, PIT_MODECOMMAND_REGISTER); 
-	outb((QUARTZ / CLOCKFREQ) % 256, PIT_CHANNEL_0_DATA_PORT);
-	outb((QUARTZ / CLOCKFREQ) / 256, PIT_CHANNEL_0_DATA_PORT);
+    outb(PIT_ONE_SHOT_MODE, PIT_MODECOMMAND_REGISTER);
+    outb((QUARTZ / CLOCKFREQ) % 256, PIT_CHANNEL_0_DATA_PORT);
+    outb((QUARTZ / CLOCKFREQ) / 256, PIT_CHANNEL_0_DATA_PORT);
 }
