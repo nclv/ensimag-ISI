@@ -1,3 +1,5 @@
+package animal;
+
 public class Animal {
     private String nom;
     private float poids;

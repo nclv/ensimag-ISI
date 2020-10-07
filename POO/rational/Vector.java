@@ -1,3 +1,5 @@
+package rational;
+
 public class Vector {
     /**
      * The internal array used to hold members of a Vector. The elements are in

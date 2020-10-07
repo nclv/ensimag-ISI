@@ -1,3 +1,5 @@
+package animal;
+
 public class Canard extends Animal {
 
     private String couleurPlumes;

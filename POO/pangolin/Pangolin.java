@@ -1,3 +1,5 @@
+package pangolin;
+
 /**
  * Cette classe fournit l'implantation d'un Pangolin, petit mammifère d'Asie et
  * d'Afrique ressemblant « à un artichaut à l'envers avec des pattes, prolongé

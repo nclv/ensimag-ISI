@@ -1,3 +1,5 @@
+package animal;
+
 public class Vache extends Animal {
 
     private int nombreTaches;

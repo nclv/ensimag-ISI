@@ -1,3 +1,5 @@
+package rational;
+
 public class TestVector {
    public static void main(String[] args) {
     	// === 8.b     

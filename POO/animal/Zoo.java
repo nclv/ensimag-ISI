@@ -1,3 +1,5 @@
+package animal;
+
 import java.util.LinkedList;
 
 class Zoo {

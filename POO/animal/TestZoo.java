@@ -1,3 +1,5 @@
+package animal;
+
 public class TestZoo {
     public static void main(String[] args) {
         Zoo ensimagZoo = new Zoo("Ensimag");

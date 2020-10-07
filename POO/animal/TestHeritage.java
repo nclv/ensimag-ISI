@@ -1,3 +1,5 @@
+package animal;
+
 public class TestHeritage {
     public static void main(String[] args) {
         Canard donald = new Canard("Canardo", 5, "noir tuxien");
