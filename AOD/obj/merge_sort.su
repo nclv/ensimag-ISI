@@ -1,0 +1,5 @@
+src/merge_sort.c:10:6:merge	64	static
+src/merge_sort.c:33:6:mergesort.part.0	160	static
+src/merge_sort.c:33:6:mergesort	32	static
+src/merge_sort.c:44:6:functions_execution_time	64	static
+src/merge_sort.c:58:5:main	48	static

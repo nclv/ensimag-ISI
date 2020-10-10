@@ -29,8 +29,12 @@ $(BINDIR)/parcours_tableau_bidimensionnel: obj/parcours_tableau_bidimensionnel.o
 $(BINDIR)/transposition: obj/transposition.o obj/utils.o
 	$(LD) $(LDFLAGS) obj/transposition.o obj/utils.o -o $@ -lm
 
+$(BINDIR)/merge_sort: obj/merge_sort.o obj/utils.o
+	$(LD) $(LDFLAGS) obj/merge_sort.o obj/utils.o -o $@ -lm
+
 binary: $(BINDIR)/parcours_tableau_bidimensionnel \
-		$(BINDIR)/transposition
+		$(BINDIR)/transposition \
+		$(BINDIR)/merge_sort
 
 clean:
 	rm -rf $(BINDIR)/* obj/*
