@@ -1,0 +1,8 @@
+src/transposition.c:14:6:transpose_ligne	32	static
+src/transposition.c:22:6:transpose_block	192	static
+src/transposition.c:42:6:transpose_rec_aux	288	dynamic,bounded
+src/transposition.c:64:9:transpose_rec_aux._omp_fn.0	80	dynamic,bounded
+src/transposition.c:69:9:transpose_rec_aux._omp_fn.1	80	dynamic,bounded
+src/transposition.c:76:6:transpose_rec	112	dynamic,bounded
+src/transposition.c:84:6:functions_execution_time	48	static
+src/transposition.c:98:5:main	32	static

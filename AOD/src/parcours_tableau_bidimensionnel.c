@@ -5,37 +5,11 @@
 #include <time.h>
 #include <unistd.h>
 
-#define n (1000)
-#define m (1000)
-#define RANGE (100)
+#include "utils.h"
 
 static double A[n][m];
 static double S[n];
 static double T[m];
-
-void random_matrix2d(double matrix[n][m]) {
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < m; ++j) {
-            matrix[i][j] = RANGE * ((double)rand() / RAND_MAX);
-        }
-    }
-}
-
-void display_matrix(double matrix[n][m]) {
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < m; ++j) {
-            printf("%04.1f ", matrix[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-void display_array(double array[n]) {
-    for (size_t i = 0; i < n; ++i) {
-        printf("%04.1f ", array[i]);
-    }
-    printf("\n");
-}
 
 void line_max(double matrix[n][m], double array[n]) {
     for (size_t i = 0; i < n; ++i) {
@@ -129,8 +103,8 @@ void line_max_col_min_block(double matrix[n][m], double array_line[n], double ar
         for (size_t J = 1; J < m; J += K) {
             maxi = (n < I + K) ? n : I + K;
             maxj = (m < J + K) ? m : J + K;
-            for (size_t i = 0; i < maxi; ++i) {
-                for (size_t j = 0; j < maxj; ++j) {
+            for (size_t i = I; i < maxi; ++i) {
+                for (size_t j = J; j < maxj; ++j) {
                     if (array_col[j] > matrix[i][j]) {
                         array_col[j] = matrix[i][j];
                     }
