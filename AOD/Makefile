@@ -13,6 +13,7 @@ SRC_FILES=$(wildcard src/*.c)
 
 # Par défaut, la compilation de src/toto.c génère le fichier objet obj/toto.o
 OBJ_FILES=$(patsubst src/%.c,obj/%.o,$(SRC_FILES))
+COMMON_OBJ_FILES= obj/utils.o obj/timing.o
 
 REFDIR=.
 SRCDIR=$(REFDIR)/src
@@ -23,14 +24,14 @@ all: binary
 obj/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@ -lm
 
-$(BINDIR)/parcours_tableau_bidimensionnel: obj/parcours_tableau_bidimensionnel.o obj/utils.o
-	$(LD) $(LDFLAGS) obj/parcours_tableau_bidimensionnel.o obj/utils.o -o $@ -lm
+$(BINDIR)/parcours_tableau_bidimensionnel: obj/parcours_tableau_bidimensionnel.o $(COMMON_OBJ_FILES)
+	$(LD) $(LDFLAGS) obj/parcours_tableau_bidimensionnel.o $(COMMON_OBJ_FILES) -o $@ -lm
 
-$(BINDIR)/transposition: obj/transposition.o obj/utils.o
-	$(LD) $(LDFLAGS) obj/transposition.o obj/utils.o -o $@ -lm
+$(BINDIR)/transposition: obj/transposition.o $(COMMON_OBJ_FILES)
+	$(LD) $(LDFLAGS) obj/transposition.o $(COMMON_OBJ_FILES) -o $@ -lm
 
-$(BINDIR)/merge_sort: obj/merge_sort.o obj/utils.o
-	$(LD) $(LDFLAGS) obj/merge_sort.o obj/utils.o -o $@ -lm
+$(BINDIR)/merge_sort: obj/merge_sort.o $(COMMON_OBJ_FILES)
+	$(LD) $(LDFLAGS) obj/merge_sort.o $(COMMON_OBJ_FILES) -o $@ -lm
 
 binary: $(BINDIR)/parcours_tableau_bidimensionnel \
 		$(BINDIR)/transposition \

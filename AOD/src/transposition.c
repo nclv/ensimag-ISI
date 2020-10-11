@@ -6,12 +6,11 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "const.h"
+#include "timing.h"
 #include "utils.h"
 
-static double A[n][m];
-static double B[n][m];
-
-void transpose_ligne(double matrix[n][m], double result[n][m]) {
+void transpose_ligne(double **matrix, double **result) {
     for (size_t i = 0; i < m; ++i) {
         for (size_t j = 0; j < n; ++j) {
             result[j][i] = matrix[i][j];
@@ -19,7 +18,7 @@ void transpose_ligne(double matrix[n][m], double result[n][m]) {
     }
 }
 
-void transpose_block(double matrix[n][m], double result[n][m]) {
+void transpose_block(double **matrix, double **result) {
     long int Z = sysconf(_SC_LEVEL1_ICACHE_SIZE);
     size_t K = (size_t)sqrt((double)Z / 2);  // sqrt(Z / 2) where Z = 2^15 = 32K
     printf("Z = %ld, K = %ld\n", Z, K);
@@ -39,7 +38,7 @@ void transpose_block(double matrix[n][m], double result[n][m]) {
     }
 }
 
-void transpose_rec_aux(double matrix[n][m], double result[n][m],
+void transpose_rec_aux(double **matrix, double **result,
                        size_t mAb, size_t mAe, size_t nAb, size_t nAe,
                        size_t mBb, size_t mBe, size_t nBb, size_t nBe,
                        size_t S) {
@@ -73,7 +72,7 @@ void transpose_rec_aux(double matrix[n][m], double result[n][m],
     }
 }
 
-void transpose_rec(double matrix[n][m], double result[n][m]) {
+void transpose_rec(double **matrix, double **result) {
     long int Z = sysconf(_SC_LEVEL1_ICACHE_SIZE);
     size_t S = (size_t)sqrt((double)Z / 2);  // sqrt(Z / 2) where Z = 2^15 = 32K
     printf("Z = %ld, K = %ld\n", Z, S);
@@ -81,44 +80,74 @@ void transpose_rec(double matrix[n][m], double result[n][m]) {
     transpose_rec_aux(matrix, result, 0, m, 0, n, 0, n, 0, m, S);
 }
 
-void functions_execution_time(double matrix[n][m], double result[n][m],
-                              void (*transposition_function)(double[n][m], double[n][m])) {
-    static clock_t start, end;
-    static double cpu_time_used;
+// void functions_execution_time(double matrix[n][m], double result[n][m],
+//                               void (*transposition_function)(double[n][m], double[n][m])) {
+//     static clock_t start, end;
+//     static double cpu_time_used;
 
-    start = clock();
-    (*transposition_function)(matrix, result);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+//     start = clock();
+//     (*transposition_function)(matrix, result);
+//     end = clock();
+//     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-    printf("CPU time used: %lf\n", cpu_time_used);
-    // printf("%s took %f seconds to execute for an entry n = %ld\n", function_name, cpu_time_used, n);
+//     printf("CPU time used: %lf\n", cpu_time_used);
+//     // printf("%s took %f seconds to execute for an entry n = %ld\n", function_name, cpu_time_used, n);
+// }
+
+void generic_transpose_ligne(t_mergesort_args *mergesort_args,
+                             t_transposition_args *transposition_args,
+                             t_array2d_min_max_args *array2d_min_max_args) {
+    (void)mergesort_args;
+    (void)array2d_min_max_args;
+    transpose_ligne(transposition_args->matrix, transposition_args->result);
+}
+
+void generic_transpose_block(t_mergesort_args *mergesort_args,
+                             t_transposition_args *transposition_args,
+                             t_array2d_min_max_args *array2d_min_max_args) {
+    (void)mergesort_args;
+    (void)array2d_min_max_args;
+    transpose_block(transposition_args->matrix, transposition_args->result);
+}
+
+void generic_transpose_rec(t_mergesort_args *mergesort_args,
+                           t_transposition_args *transposition_args,
+                           t_array2d_min_max_args *array2d_min_max_args) {
+    (void)mergesort_args;
+    (void)array2d_min_max_args;
+    transpose_rec(transposition_args->matrix, transposition_args->result);
 }
 
 int main(void) {
-    random_matrix2d(A);
+    double **A = allocate_matrix(n, m);
+    double **B = allocate_matrix(n, m);
+    random_matrix2d_dyn(A, n, m);
 
     // printf("Matrice A\n");
-    // display_matrix(A);
+    // display_matrix_dyn(A, n, m);
 
     // transpose_ligne(A, B);
     // printf("Matrice B\n");
-    // display_matrix(B);
+    // display_matrix_dyn(B, n, m);
 
     // transpose_block(A, B);
     // printf("Matrice B\n");
-    // display_matrix(B);
+    // display_matrix_dyn(B, n, m);
 
     // transpose_rec(A, B);
     // printf("Matrice B\n");
-    // display_matrix(B);
+    // display_matrix_dyn(B, n, m);
 
+    t_transposition_args transposition_args = {.matrix = A, .result = B};
     printf("\ntranspose_ligne\n");
-    functions_execution_time(A, B, transpose_ligne);
+    generic_fn_execution_time(NULL, &transposition_args, NULL, generic_transpose_ligne);
     printf("\ntranspose_block\n");
-    functions_execution_time(A, B, transpose_block);
+    generic_fn_execution_time(NULL, &transposition_args, NULL, generic_transpose_block);
     printf("\ntranspose_rec\n");
-    functions_execution_time(A, B, transpose_rec);
+    generic_fn_execution_time(NULL, &transposition_args, NULL, generic_transpose_rec);
+
+    free_matrix(A, n);
+    free_matrix(B, n);
 
     return EXIT_SUCCESS;
 }

@@ -3,9 +3,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "timing.h"
 #include "utils.h"
-
-typedef double E;
 
 void merge(size_t _n, E *A, size_t _m, E *B, E *X) {
     size_t k, ptA, ptB;
@@ -41,18 +40,12 @@ void mergesort(size_t _n, E *T, E *U) {
     }
 }
 
-void functions_execution_time(size_t _n, E *array, E *buffer,
-                              void (*mergesort_function)(size_t, E *, E *)) {
-    static clock_t start, end;
-    static double cpu_time_used;
-
-    start = clock();
-    (*mergesort_function)(_n, array, buffer);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-    printf("CPU time used: %lf\n", cpu_time_used);
-    // printf("%s took %f seconds to execute for an entry n = %ld\n", function_name, cpu_time_used, n);
+void generic_mergesort(t_mergesort_args *mergesort_args,
+                       t_transposition_args *transposition_args,
+                       t_array2d_min_max_args *array2d_min_max_args) {
+    (void)transposition_args;
+    (void)array2d_min_max_args;
+    mergesort(mergesort_args->_n, mergesort_args->array, mergesort_args->buffer);
 }
 
 int main(void) {
@@ -69,7 +62,8 @@ int main(void) {
     // display_array_n(array);
 
     printf("\nmergesort\n");
-    functions_execution_time(n, array, buffer, mergesort);
+    t_mergesort_args mergesort_args = {._n = n, .array = array, .buffer = buffer};
+    generic_fn_execution_time(&mergesort_args, NULL, NULL, generic_mergesort);
 
     free(buffer);
     free(array);

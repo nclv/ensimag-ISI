@@ -5,13 +5,15 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "const.h"
+#include "timing.h"
 #include "utils.h"
 
-static double A[n][m];
-static double S[n];
-static double T[m];
+// static double A[n][m];
+// static double S[n];
+// static double T[m];
 
-void line_max(double matrix[n][m], double array[n]) {
+void line_max(double **matrix, double *array) {
     for (size_t i = 0; i < n; ++i) {
         array[i] = matrix[i][0];
         for (size_t j = 1; j < m; ++j) {
@@ -22,7 +24,7 @@ void line_max(double matrix[n][m], double array[n]) {
     }
 }
 
-void col_min(double matrix[n][m], double array[m]) {
+void col_min(double **matrix, double *array) {
     for (size_t j = 0; j < m; ++j) {
         array[j] = matrix[0][j];
     }
@@ -35,7 +37,7 @@ void col_min(double matrix[n][m], double array[m]) {
     }
 }
 
-void line_max_col_min(double matrix[n][m], double array_line[n], double array_col[m]) {
+void line_max_col_min(double **matrix, double *array_line, double *array_col) {
     // Initialisation
     for (size_t i = 0; i < n; ++i) {
         array_line[i] = __FLT_MIN__;
@@ -57,10 +59,10 @@ void line_max_col_min(double matrix[n][m], double array_line[n], double array_co
     }
 }
 
-void line_max_col_min_opti(double matrix[n][m], double array_line[n], double array_col[m]) {
+void line_max_col_min_opti(double **matrix, double *array_line, double *array_col) {
     // Initialisation i = 0
     for (size_t j = 0; j < m; ++j) {
-        array_col[j] = A[0][j];
+        array_col[j] = matrix[0][j];
         if (array_line[0] < matrix[0][j]) {
             array_line[0] = matrix[0][j];
         }
@@ -83,7 +85,7 @@ void line_max_col_min_opti(double matrix[n][m], double array_line[n], double arr
     }
 }
 
-void line_max_col_min_block(double matrix[n][m], double array_line[n], double array_col[m]) {
+void line_max_col_min_block(double **matrix, double *array_line, double *array_col) {
     long int Z = sysconf(_SC_LEVEL1_ICACHE_SIZE);
     size_t K = (size_t)sqrt((double)Z);  // sqrt(Z) where Z = 2^15 = 32K
     printf("Z = %ld, K = %ld\n", Z, K);
@@ -103,8 +105,8 @@ void line_max_col_min_block(double matrix[n][m], double array_line[n], double ar
         for (size_t J = 1; J < m; J += K) {
             maxi = (n < I + K) ? n : I + K;
             maxj = (m < J + K) ? m : J + K;
-            for (size_t i = I; i < maxi; ++i) {
-                for (size_t j = J; j < maxj; ++j) {
+            for (size_t i = 0; i < maxi; ++i) {
+                for (size_t j = 0; j < maxj; ++j) {
                     if (array_col[j] > matrix[i][j]) {
                         array_col[j] = matrix[i][j];
                     }
@@ -117,58 +119,76 @@ void line_max_col_min_block(double matrix[n][m], double array_line[n], double ar
     }
 }
 
-void functions_execution_time(double matrix[n][m], double array_line[n], double array_col[m],
-                              void (*line_max_col_min_function)(double[n][m], double[n], double[m])) {
-    static clock_t start, end;
-    static double cpu_time_used;
+void generic_line_max_col_min(t_mergesort_args *mergesort_args,
+                              t_transposition_args *transposition_args,
+                              t_array2d_min_max_args *array2d_min_max_args) {
+    (void)mergesort_args;
+    (void)transposition_args;
+    line_max_col_min(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+}
 
-    start = clock();
-    (*line_max_col_min_function)(matrix, array_line, array_col);
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+void generic_line_max_col_min_opti(t_mergesort_args *mergesort_args,
+                                   t_transposition_args *transposition_args,
+                                   t_array2d_min_max_args *array2d_min_max_args) {
+    (void)mergesort_args;
+    (void)transposition_args;
+    line_max_col_min_opti(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+}
 
-    printf("CPU time used: %lf\n", cpu_time_used);
-    // printf("%s took %f seconds to execute for an entry n = %ld\n", function_name, cpu_time_used, n);
+void generic_line_max_col_min_block(t_mergesort_args *mergesort_args,
+                                   t_transposition_args *transposition_args,
+                                   t_array2d_min_max_args *array2d_min_max_args) {
+    (void)mergesort_args;
+    (void)transposition_args;
+    line_max_col_min_block(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
 }
 
 int main(void) {
-    random_matrix2d(A);
+    double **A = allocate_matrix(n, m);
+    double *S = malloc(n * sizeof *S);
+    double *T = malloc(m * sizeof *T);
+    random_matrix2d_dyn(A, n, m);
 
     // printf("Matrice A\n");
-    // display_matrix(A);
+    // display_matrix_dyn(A, n, m);
 
     // line_max(A, S);
     // printf("Array S\n");
-    // display_array(S);
+    // display_array(S, n);
 
     // col_min(A, T);
     // printf("Array T\n");
-    // display_array(T);
+    // display_array(T, m);
 
     // line_max_col_min(A, S, T);
     // printf("Array S\n");
-    // display_array(S);
+    // display_array(S, n);
     // printf("Array T\n");
-    // display_array(T);
+    // display_array(T, m);
 
     // line_max_col_min_opti(A, S, T);
     // printf("Array S\n");
-    // display_array(S);
+    // display_array(S, n);
     // printf("Array T\n");
-    // display_array(T);
+    // display_array(T, m);
 
     // line_max_col_min_block(A, S, T);
     // printf("Array S\n");
-    // display_array(S);
+    // display_array(S, n);
     // printf("Array T\n");
-    // display_array(T);
+    // display_array(T, m);
 
+    t_array2d_min_max_args array2d_min_max_args = {.matrix = A, .line = S, .col = T};
     printf("\nline_max_col_min\n");
-    functions_execution_time(A, S, T, line_max_col_min);
+    generic_fn_execution_time(NULL, NULL, &array2d_min_max_args, generic_line_max_col_min);
     printf("\nline_max_col_min_opti\n");
-    functions_execution_time(A, S, T, line_max_col_min_opti);
+    generic_fn_execution_time(NULL, NULL, &array2d_min_max_args, generic_line_max_col_min_opti);
     printf("\nline_max_col_min_block\n");
-    functions_execution_time(A, S, T, line_max_col_min_block);
+    generic_fn_execution_time(NULL, NULL, &array2d_min_max_args, generic_line_max_col_min_block);
+
+    free_matrix(A, n);
+    free(S);
+    free(T);
 
     return EXIT_SUCCESS;
 }
