@@ -40,30 +40,33 @@ void mergesort(size_t _n, E *T, E *U) {
     }
 }
 
-void generic_mergesort(t_mergesort_args *mergesort_args,
-                       t_transposition_args *transposition_args,
-                       t_array2d_min_max_args *array2d_min_max_args) {
-    (void)transposition_args;
-    (void)array2d_min_max_args;
-    mergesort(mergesort_args->_n, mergesort_args->array, mergesort_args->buffer);
+void generic_mergesort(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_mergesort_args *mergesort_args = args_wrapper->mergesort_args;
+        if (mergesort_args != NULL) {
+            mergesort(mergesort_args->_n, mergesort_args->array, mergesort_args->buffer);
+        }
+    }
 }
 
 int main(void) {
     E *array = malloc(n * sizeof *array);
     E *buffer = calloc(n, sizeof *buffer);
-    random_array1d_n(array);
+    random_array1d(array, n);
 
-    // display_array_n(array);
-    // display_array_n(buffer);
+    // display_array(array, n);
+    // display_array(buffer, n);
 
-    // // array2 is our buffer
     // mergesort(n, array, buffer);
 
-    // display_array_n(array);
+    // display_array(array, n);
 
     printf("\nmergesort\n");
     t_mergesort_args mergesort_args = {._n = n, .array = array, .buffer = buffer};
-    generic_fn_execution_time(&mergesort_args, NULL, NULL, generic_mergesort);
+    t_args_wrapper args_wrapper = {.mergesort_args = &mergesort_args,
+                                   .transposition_args = NULL,
+                                   .array2d_min_max_args = NULL};
+    generic_fn_execution_time(&args_wrapper, generic_mergesort);
 
     free(buffer);
     free(array);

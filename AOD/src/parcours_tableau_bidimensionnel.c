@@ -119,28 +119,31 @@ void line_max_col_min_block(double **matrix, double *array_line, double *array_c
     }
 }
 
-void generic_line_max_col_min(t_mergesort_args *mergesort_args,
-                              t_transposition_args *transposition_args,
-                              t_array2d_min_max_args *array2d_min_max_args) {
-    (void)mergesort_args;
-    (void)transposition_args;
-    line_max_col_min(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+void generic_line_max_col_min(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_array2d_min_max_args *array2d_min_max_args = args_wrapper->array2d_min_max_args;
+        if (array2d_min_max_args != NULL) {
+            line_max_col_min(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+        }
+    }
 }
 
-void generic_line_max_col_min_opti(t_mergesort_args *mergesort_args,
-                                   t_transposition_args *transposition_args,
-                                   t_array2d_min_max_args *array2d_min_max_args) {
-    (void)mergesort_args;
-    (void)transposition_args;
-    line_max_col_min_opti(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+void generic_line_max_col_min_opti(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_array2d_min_max_args *array2d_min_max_args = args_wrapper->array2d_min_max_args;
+        if (array2d_min_max_args != NULL) {
+            line_max_col_min_opti(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+        }
+    }
 }
 
-void generic_line_max_col_min_block(t_mergesort_args *mergesort_args,
-                                   t_transposition_args *transposition_args,
-                                   t_array2d_min_max_args *array2d_min_max_args) {
-    (void)mergesort_args;
-    (void)transposition_args;
-    line_max_col_min_block(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+void generic_line_max_col_min_block(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_array2d_min_max_args *array2d_min_max_args = args_wrapper->array2d_min_max_args;
+        if (array2d_min_max_args != NULL) {
+            line_max_col_min_block(array2d_min_max_args->matrix, array2d_min_max_args->line, array2d_min_max_args->col);
+        }
+    }
 }
 
 int main(void) {
@@ -179,12 +182,15 @@ int main(void) {
     // display_array(T, m);
 
     t_array2d_min_max_args array2d_min_max_args = {.matrix = A, .line = S, .col = T};
+    t_args_wrapper args_wrapper = {.mergesort_args = NULL,
+                                   .transposition_args = NULL,
+                                   .array2d_min_max_args = &array2d_min_max_args};
     printf("\nline_max_col_min\n");
-    generic_fn_execution_time(NULL, NULL, &array2d_min_max_args, generic_line_max_col_min);
+    generic_fn_execution_time(&args_wrapper, generic_line_max_col_min);
     printf("\nline_max_col_min_opti\n");
-    generic_fn_execution_time(NULL, NULL, &array2d_min_max_args, generic_line_max_col_min_opti);
+    generic_fn_execution_time(&args_wrapper, generic_line_max_col_min_opti);
     printf("\nline_max_col_min_block\n");
-    generic_fn_execution_time(NULL, NULL, &array2d_min_max_args, generic_line_max_col_min_block);
+    generic_fn_execution_time(&args_wrapper, generic_line_max_col_min_block);
 
     free_matrix(A, n);
     free(S);

@@ -94,28 +94,31 @@ void transpose_rec(double **matrix, double **result) {
 //     // printf("%s took %f seconds to execute for an entry n = %ld\n", function_name, cpu_time_used, n);
 // }
 
-void generic_transpose_ligne(t_mergesort_args *mergesort_args,
-                             t_transposition_args *transposition_args,
-                             t_array2d_min_max_args *array2d_min_max_args) {
-    (void)mergesort_args;
-    (void)array2d_min_max_args;
-    transpose_ligne(transposition_args->matrix, transposition_args->result);
+void generic_transpose_ligne(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_transposition_args *transposition_args = args_wrapper->transposition_args;
+        if (transposition_args != NULL) {
+            transpose_ligne(transposition_args->matrix, transposition_args->result);
+        }
+    }
 }
 
-void generic_transpose_block(t_mergesort_args *mergesort_args,
-                             t_transposition_args *transposition_args,
-                             t_array2d_min_max_args *array2d_min_max_args) {
-    (void)mergesort_args;
-    (void)array2d_min_max_args;
-    transpose_block(transposition_args->matrix, transposition_args->result);
+void generic_transpose_block(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_transposition_args *transposition_args = args_wrapper->transposition_args;
+        if (transposition_args != NULL) {
+            transpose_block(transposition_args->matrix, transposition_args->result);
+        }
+    }
 }
 
-void generic_transpose_rec(t_mergesort_args *mergesort_args,
-                           t_transposition_args *transposition_args,
-                           t_array2d_min_max_args *array2d_min_max_args) {
-    (void)mergesort_args;
-    (void)array2d_min_max_args;
-    transpose_rec(transposition_args->matrix, transposition_args->result);
+void generic_transpose_rec(t_args_wrapper *args_wrapper) {
+    if (args_wrapper != NULL) {
+        t_transposition_args *transposition_args = args_wrapper->transposition_args;
+        if (transposition_args != NULL) {
+            transpose_rec(transposition_args->matrix, transposition_args->result);
+        }
+    }
 }
 
 int main(void) {
@@ -139,12 +142,15 @@ int main(void) {
     // display_matrix_dyn(B, n, m);
 
     t_transposition_args transposition_args = {.matrix = A, .result = B};
+    t_args_wrapper args_wrapper = {.mergesort_args = NULL,
+                                   .transposition_args = &transposition_args,
+                                   .array2d_min_max_args = NULL};
     printf("\ntranspose_ligne\n");
-    generic_fn_execution_time(NULL, &transposition_args, NULL, generic_transpose_ligne);
+    generic_fn_execution_time(&args_wrapper, generic_transpose_ligne);
     printf("\ntranspose_block\n");
-    generic_fn_execution_time(NULL, &transposition_args, NULL, generic_transpose_block);
+    generic_fn_execution_time(&args_wrapper, generic_transpose_block);
     printf("\ntranspose_rec\n");
-    generic_fn_execution_time(NULL, &transposition_args, NULL, generic_transpose_rec);
+    generic_fn_execution_time(&args_wrapper, generic_transpose_rec);
 
     free_matrix(A, n);
     free_matrix(B, n);
