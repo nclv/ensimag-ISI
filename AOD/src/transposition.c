@@ -80,20 +80,6 @@ void transpose_rec(double **matrix, double **result) {
     transpose_rec_aux(matrix, result, 0, m, 0, n, 0, n, 0, m, S);
 }
 
-// void functions_execution_time(double matrix[n][m], double result[n][m],
-//                               void (*transposition_function)(double[n][m], double[n][m])) {
-//     static clock_t start, end;
-//     static double cpu_time_used;
-
-//     start = clock();
-//     (*transposition_function)(matrix, result);
-//     end = clock();
-//     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-//     printf("CPU time used: %lf\n", cpu_time_used);
-//     // printf("%s took %f seconds to execute for an entry n = %ld\n", function_name, cpu_time_used, n);
-// }
-
 void generic_transpose_ligne(t_args_wrapper *args_wrapper) {
     if (args_wrapper != NULL) {
         t_transposition_args *transposition_args = args_wrapper->transposition_args;
