@@ -8,8 +8,8 @@ public class BinairePlus extends ExpBinaire{
 
     @Override
     public double evaluer(Env env) {
-        return env.obtenirValeur(this.getOpGauche().toStringInfixe())
-                + env.obtenirValeur(this.getOpDroite().toStringInfixe());
+        return this.getOpGauche().evaluer(env)
+                + this.getOpDroite().evaluer(env);
     }
 
     public BinairePlus(ExpAbstraite opGauche, ExpAbstraite opDroite) {

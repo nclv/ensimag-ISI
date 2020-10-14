@@ -11,7 +11,8 @@ public class Env {
     }
 
     public double obtenirValeur(String nom) {
-        return this.map.get(nom);
+        double val = this.map.get(nom);
+        return val;
     }
 
     @Override
