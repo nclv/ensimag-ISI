@@ -1,10 +1,10 @@
-src/transposition.c:97:6:generic_transpose_ligne	32	static
+src/transposition.c:83:6:generic_transpose_ligne	32	static
 src/transposition.c:13:6:transpose_ligne	32	static
 src/transposition.c:21:6:transpose_block	64	static
-src/transposition.c:106:6:generic_transpose_block	32	static
+src/transposition.c:92:6:generic_transpose_block	32	static
 src/transposition.c:41:6:transpose_rec_aux	288	dynamic,bounded
 src/transposition.c:63:9:transpose_rec_aux._omp_fn.0	80	dynamic,bounded
 src/transposition.c:68:9:transpose_rec_aux._omp_fn.1	80	dynamic,bounded
-src/transposition.c:115:6:generic_transpose_rec	112	dynamic,bounded
+src/transposition.c:101:6:generic_transpose_rec	112	dynamic,bounded
 src/transposition.c:75:6:transpose_rec	112	dynamic,bounded
-src/transposition.c:124:5:main	80	static
+src/transposition.c:110:5:main	80	static
