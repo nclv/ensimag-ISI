@@ -6,6 +6,7 @@
 #include "cpu.h"
 
 process_t processes_table[PROCESS_COUNT];
+static int64_t pid = -1;
 
 void idle(void) {
     printf("[idle] je tente de passer la main a proc1...\n");
@@ -36,7 +37,7 @@ void init_processes(void) {
      * fonction kernel_start.
      */
     process_t *idle = &processes_table[0];
-    idle->pid = 0;
+    idle->pid = pid++;
     snprintf(idle->name, sizeof(idle->name), "%s", "idle");
     idle->state = RUNNING;
 
@@ -46,7 +47,7 @@ void init_processes(void) {
      * de la fonction proc1.
      */
     process_t *proc1_t = &processes_table[1];
-    proc1_t->pid = 1;
+    proc1_t->pid = pid++;
     snprintf(proc1_t->name, sizeof(proc1_t->name), "%s", "proc1");
     proc1_t->state = READY_TO_RUN;
     proc1_t->registers[1] = (uint32_t)&proc1_t->stack[STACK_CAPACITY - 1];
