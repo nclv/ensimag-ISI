@@ -145,18 +145,14 @@
 #define MAXBUF (sizeof(long int) * 8) /* enough for binary */
 
 static void
-    printnum(u, base, putc, putc_arg) register unsigned long u; /* number to print */
-register int base;
-void (*putc)();
-char *putc_arg;
-{
+printnum(register unsigned long u, register int base, void (*putc)(char *, register char), char *putc_arg) {
     char buf[MAXBUF]; /* build number here */
     register char *p = &buf[MAXBUF - 1];
     static char digs[] = "0123456789abcdef";
 
     do {
-        *p-- = digs[u % base];
-        u /= base;
+        *p-- = digs[u % (unsigned long)base];
+        u /= (unsigned long)base;
     } while (u != 0);
 
     while (++p != &buf[MAXBUF])
@@ -165,13 +161,7 @@ char *putc_arg;
 
 static unsigned char _doprnt_truncates = FALSE;
 
-void _doprnt(fmt, args, radix, putc, putc_arg)
-    const char *fmt;
-va_list args;
-int radix;      /* default radix - for '%r' */
-void (*putc)(); /* character output */
-char *putc_arg; /* argument for putc */
-{
+void _doprnt(const char *fmt, va_list args, int radix, void (*putc)(char *, register char), char *putc_arg) {
     int length;
     int prec;
     unsigned char ladjust;
@@ -296,7 +286,7 @@ char *putc_arg; /* argument for putc */
                         j = *p++;
                         for (; (c = *p) > 32; p++)
                             (*putc)(putc_arg, c);
-                        printnum((unsigned)((u >> (j - 1)) & ((2 << (i - j)) - 1)),
+                        printnum((unsigned)((u >> (j - 1)) & (unsigned long)((2 << (i - j)) - 1)),
                                  base, putc, putc_arg);
                     } else if (u & (1 << (i - 1))) {
                         if (any)
@@ -318,7 +308,7 @@ char *putc_arg; /* argument for putc */
             }
 
             case 'c':
-                c = va_arg(args, int);
+                c = (char)va_arg(args, int);
                 (*putc)(putc_arg, c);
                 break;
 
@@ -332,7 +322,7 @@ char *putc_arg; /* argument for putc */
                 p = va_arg(args, char *);
 
                 if (p == (char *)0)
-                    p = "";
+                    p = (char *)"";
 
                 if (length > 0 && !ladjust) {
                     n = 0;
@@ -499,10 +489,10 @@ char *putc_arg; /* argument for putc */
             print_signed:
                 n = va_arg(args, long);
                 if (n >= 0) {
-                    u = n;
+                    u = (unsigned long)n;
                     sign_char = plus_sign;
                 } else {
-                    u = -n;
+                    u = (unsigned long)-n;
                     sign_char = '-';
                 }
                 goto print_num;
@@ -517,18 +507,18 @@ char *putc_arg; /* argument for putc */
                 static char digits[] = "0123456789abcdef";
                 char *prefix = 0;
 
-                if (truncate) u = (long)((int)(u));
+                if (truncate) u = (unsigned long)((int)(u));
 
                 if (u != 0 && altfmt) {
                     if (base == 8)
-                        prefix = "0";
+                        prefix = (char *)"0";
                     else if (base == 16)
-                        prefix = "0x";
+                        prefix = (char *)"0x";
                 }
 
                 do {
-                    *p-- = digits[u % base];
-                    u /= base;
+                    *p-- = digits[u % (unsigned long)base];
+                    u /= (unsigned long)base;
                     prec--;
                 } while (u != 0);
 
@@ -536,7 +526,7 @@ char *putc_arg; /* argument for putc */
                 if (sign_char)
                     length--;
                 if (prefix)
-                    length -= strlen(prefix);
+                    length -= (int)strlen(prefix);
 
                 if (prec > 0)
                     length -= prec;
@@ -546,7 +536,7 @@ char *putc_arg; /* argument for putc */
                         (*putc)(putc_arg, ' ');
                 }
                 if (sign_char)
-                    (*putc)(putc_arg, sign_char);
+                    (*putc)(putc_arg, (char)sign_char);
                 if (prefix)
                     while (*prefix)
                         (*putc)(putc_arg, *prefix++);

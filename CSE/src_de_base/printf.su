@@ -1,0 +1,6 @@
+printf.c:67:1:flush	32	dynamic,bounded
+printf.c:77:13:printf_char	64	dynamic,bounded
+printf.c:93:5:vprintf	192	dynamic,bounded
+printf.c:107:5:printf	48	dynamic,bounded
+printf.c:118:5:putchar	48	dynamic,bounded
+printf.c:124:5:puts	32	dynamic,bounded

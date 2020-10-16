@@ -69,15 +69,12 @@ flush(struct printf_state *state) {
 	 * It would be nice to call write(1,) here, but if fd_set_console
 	 * has not been called, it will break.
 	 */
-    console_putbytes((const char *)state->buf, state->index);
+    console_putbytes((const char *)state->buf, (int)state->index);
 
     state->index = 0;
 }
 
-static void
-    printf_char(arg, c) char *arg;
-int c;
-{
+static void printf_char(char *arg, char c) {
     struct printf_state *state = (struct printf_state *)arg;
 
     if ((c == 0) || (c == '\n') || (state->index >= PRINTF_BUFMAX)) {
@@ -97,7 +94,7 @@ int vprintf(const char *fmt, va_list args) {
     struct printf_state state;
 
     state.index = 0;
-    _doprnt(fmt, args, 0, (void (*)())printf_char, (char *)&state);
+    _doprnt(fmt, args, 0, (void (*)(char *, register char))printf_char, (char *)&state);
 
     if (state.index != 0)
         flush(&state);
@@ -119,7 +116,7 @@ int printf(const char *fmt, ...) {
 }
 
 int putchar(int c) {
-    char ch = c;
+    char ch = (char)c;
     console_putbytes(&ch, 1);
     return (unsigned char)ch;
 }

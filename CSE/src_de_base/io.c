@@ -47,7 +47,7 @@ inline void set_cursor(uint16_t pos) {
  * @param num_IRQ
  */ 
 inline void set_IRQ_mask(uint32_t num_IRQ) {
-    unsigned char value = inb(PIC1_DATA_PORT) | (1 << num_IRQ);
+    unsigned char value = (unsigned char)(inb(PIC1_DATA_PORT) | (1 << num_IRQ));
     outb(value, PIC1_DATA_PORT);
 }
 
@@ -57,7 +57,7 @@ inline void set_IRQ_mask(uint32_t num_IRQ) {
  * @param num_IRQ
  */
 inline void clear_IRQ_mask(uint32_t num_IRQ) {
-    unsigned char value = inb(PIC1_DATA_PORT) & ~(1 << num_IRQ);
+    unsigned char value = (unsigned char)(inb(PIC1_DATA_PORT) & ~(1 << num_IRQ));
     outb(value, PIC1_DATA_PORT);
 }
 

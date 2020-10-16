@@ -12,13 +12,17 @@ void idle(void) {
     uint32_t *current_registers = processes_table[0].registers;
     uint32_t *new_registers = processes_table[1].registers;
     ctx_sw(current_registers, new_registers);
-    printf("[idle] il m'a redonne la main --'\n");
+    printf("[idle] proc1 m'a redonne la main --'\n");
 }
 
 void proc1(void) {
     printf("[proc1] idle m'a donne la main\n");
-    printf("[proc1] j'arrete le systeme\n");
-    hlt();
+    printf("[proc1] je tente de passer la main a idle...\n");
+    uint32_t *current_registers = processes_table[1].registers;
+    uint32_t *new_registers = processes_table[0].registers;
+    ctx_sw(current_registers, new_registers);
+    // printf("[proc1] j'arrete le systeme\n");
+    // hlt();
 }
 
 void init_processes(void) {

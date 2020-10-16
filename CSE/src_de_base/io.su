@@ -1,0 +1,7 @@
+cpu.h:78:24:outb	16	static
+cpu.h:96:33:inb	28	static
+io.c:26:13:pic_acknowledge	16	dynamic,bounded
+io.c:33:13:set_cursor	20	dynamic,bounded
+io.c:49:13:set_IRQ_mask	36	dynamic,bounded
+io.c:59:13:clear_IRQ_mask	36	dynamic,bounded
+io.c:67:13:init_clock	16	dynamic,bounded

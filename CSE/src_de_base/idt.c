@@ -49,7 +49,7 @@ static inline void init_idt_entry(int32_t interrupt_index,
     uint32_t handler = (uint32_t)interrupt_handler;
 
     interrupt->base_lo = handler & 0x0000FFFF;
-    interrupt->base_hi = (handler >> 16) & 0x0000FFFF;
+    interrupt->base_hi = (uint16_t)(handler >> 16) & 0x0000FFFF;
     interrupt->segment_selector = KERNEL_CS; /* kernel code segment offset */
     interrupt->flags = 0x8E00;               /* interrupt gate: used to transfer control of
                                     execution across segments */

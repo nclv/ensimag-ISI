@@ -1,0 +1,3 @@
+processus.c:10:6:idle	48	dynamic,bounded
+processus.c:18:6:proc1	48	dynamic,bounded
+processus.c:28:6:init_processes	48	dynamic,bounded

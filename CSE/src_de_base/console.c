@@ -248,7 +248,7 @@ void console_write_hour(const char hour[HOUR_LEN]) {
     size_t i = 0;
     uint8_t col = VGA_WIDTH - HOUR_LEN;
     while (hour[i] != '\0') {
-        write_char(hour[i], 0, col + i, console_color);
+        write_char((unsigned char)hour[i], 0, col + i, console_color);
         place_curseur(0, col + i + 1);
         i++;
     }

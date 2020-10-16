@@ -1,0 +1,2 @@
+./ctype.h:4:19:isspace	8	static
+strtol.c:21:6:strtol	28	dynamic,bounded
