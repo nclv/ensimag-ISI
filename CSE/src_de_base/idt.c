@@ -26,7 +26,7 @@
 
 static idt_ptr_t idt_ptr;
 
-/*
+/**
  * Initialisation de la table des vecteurs d’interruption
  *
  * On appelera simplement init_idt_entry(32, traitant_IT_32);
@@ -35,6 +35,13 @@ static idt_ptr_t idt_ptr;
  * Un traitant est un pointeur de fonction.
  * "Instead of using bytes (or unsigned integers) use packed structures to make
  * the code more readable." See idt.h.
+ * 
+ * Do not call outside of init_idt()
+ * 
+ * @pre idt_ptr.base is set. KERNEL_CS is defined.
+ * 
+ * @param interrupt_index index de l'interruption dans IDT
+ * @param interrupt_handler assembly function that handle the interruption or ISR wrapper
  */
 static inline void init_idt_entry(int32_t interrupt_index,
                                   void (*interrupt_handler)(void)) {
@@ -51,6 +58,8 @@ static inline void init_idt_entry(int32_t interrupt_index,
 /**
  * Initialisation de la table des vecteurs d'interruption
  * Appelée dans kernel_start()
+ * 
+ * @pre IDT_BASE, NUM_IDT_ENTRIES and init_idt_entry() are defined. interrupt_handler assembly functions are defined in idt.h
  */
 inline void init_idt(void) {
     /* Initialisation de l'idt */
@@ -64,15 +73,21 @@ inline void init_idt(void) {
 /**
  * Renvoie l'heure
  *
- * @pre global variable compteur is set
- * @return 
+ * @param hour buffer contenant l'heure
+ * @param seconds //
+ * @return affiche l'heure hh:mm:ss
  */
 static inline void get_hour(char *hour, uint32_t seconds) {
     sprintf(hour, "%02u:%02u:%02u", (seconds / 3600), ((seconds / 60) % 60), (seconds % 60));
 }
 
 /**
+ * ISR (Interrupt Service Routine)
  * Programmable Interval Timer
+ * 
+ * @pre pic_acknowledge() from io.c. console_write_hour() from console.c. CLOCK_FREQ and get_hour() are defined.
+ * 
+ * Called in traitant.S
  */
 void tic_PIT(void) {
     pic_acknowledge();
@@ -94,9 +109,13 @@ void tic_PIT(void) {
 }
 
 /** 
- * L’octet récupéré est un tableau de booléens tel que la valeur du bit N décrit l’état de l’IRQ N : 
- * 1 si l’IRQ est masquée, 0 si elle est autorisé. Il faut donc forcer la valeur du bit N à la valeur
- * souhaitée (sans toucher les valeurs des autres bits) et envoyer ce masque sur le port de données.
+ * L’octet récupéré est un tableau de booléens tel que la valeur du bit N décrit l’état de 
+ * l’IRQ N : 1 si l’IRQ est masquée, 0 si elle est autorisé. Il faut donc forcer la valeur 
+ * du bit N à la valeur souhaitée (sans toucher les valeurs des autres bits) et envoyer ce 
+ * masque sur le port de données.
+ * 
+ * @param num_IRQ numéro de l'IRQ (Interrupt Request)
+ * @param masque masquage ou non de l'IRQ
  */
 void masque_IRQ(uint32_t num_IRQ, bool masque) {
     (masque) ? set_IRQ_mask(num_IRQ) : clear_IRQ_mask(num_IRQ);

@@ -4,6 +4,7 @@
 #include "console.h"
 #include "cpu.h"
 #include "idt.h"
+#include "processus.h"
 
 void init_clock(void);
 
@@ -53,10 +54,16 @@ void kernel_start(void) {
     masque_IRQ(32, 0);
     console_write_color("Success\n", 0);
 
+    printf("Initialisation des processus:  ");
+    init_processes();
+    console_write_color("Success\n", 0);
+
+    idle();
+
     // char hour[] = "00:00:00";
     // console_write_hour(hour);
 
-    sti();  // activation/démasquage des interruptions externes
+    // sti();  // activation/démasquage des interruptions externes
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
