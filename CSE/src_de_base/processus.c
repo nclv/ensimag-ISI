@@ -9,19 +9,25 @@ process_t processes_table[PROCESS_COUNT];
 static int64_t pid = -1;
 
 void idle(void) {
-    printf("[idle] je tente de passer la main a proc1...\n");
-    uint32_t *current_registers = processes_table[0].registers;
-    uint32_t *new_registers = processes_table[1].registers;
-    ctx_sw(current_registers, new_registers);
-    printf("[idle] proc1 m'a redonne la main --'\n");
+    for (size_t i = 0; i < 3; i++) {
+        printf("[idle] je tente de passer la main a proc1...\n");
+        uint32_t *current_registers = processes_table[0].registers;
+        uint32_t *new_registers = processes_table[1].registers;
+        ctx_sw(current_registers, new_registers);
+        printf("[idle] proc1 m'a redonne la main --'\n");
+    }
+    printf("[idle] j'arrete le systeme\n");
+    hlt();
 }
 
 void proc1(void) {
-    printf("[proc1] idle m'a donne la main\n");
-    printf("[proc1] je tente de passer la main a idle...\n");
-    uint32_t *current_registers = processes_table[1].registers;
-    uint32_t *new_registers = processes_table[0].registers;
-    ctx_sw(current_registers, new_registers);
+    for (;;) {
+        printf("[proc1] idle m'a donne la main\n");
+        printf("[proc1] je tente de passer la main a idle...\n");
+        uint32_t *current_registers = processes_table[1].registers;
+        uint32_t *new_registers = processes_table[0].registers;
+        ctx_sw(current_registers, new_registers);
+    }
     // printf("[proc1] j'arrete le systeme\n");
     // hlt();
 }

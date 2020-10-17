@@ -1,3 +1,4 @@
+cpu.h:51:24:hlt	8	static
 processus.c:11:6:idle	48	dynamic,bounded
-processus.c:19:6:proc1	48	dynamic,bounded
-processus.c:29:6:init_processes	64	dynamic,bounded
+processus.c:23:6:proc1	48	dynamic,bounded
+processus.c:35:6:init_processes	64	dynamic,bounded

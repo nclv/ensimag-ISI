@@ -7,7 +7,7 @@ console.c:99:13:place_curseur	48	dynamic,bounded
 console.c:109:13:console_scroll	32	dynamic,bounded
 console.c:130:13:new_line	16	static
 console.c:145:13:handle_char	64	dynamic,bounded
-console.c:196:6:console_putbytes	48	dynamic,bounded
-console.c:208:6:console_write	48	dynamic,bounded
-console.c:224:6:console_write_color	48	dynamic,bounded
-console.c:247:6:console_write_hour	48	dynamic,bounded
+console.c:195:6:console_putbytes	48	dynamic,bounded
+console.c:207:6:console_write	48	dynamic,bounded
+console.c:223:6:console_write_color	48	dynamic,bounded
+console.c:246:6:console_write_hour	48	dynamic,bounded

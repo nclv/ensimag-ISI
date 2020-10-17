@@ -144,7 +144,6 @@ static void new_line(void) {
  */
 static void handle_char(char c) {
     const unsigned char uc = (unsigned char)c;
-
     switch (uc) {
         case '\n':
             console_color = default_console_color;
