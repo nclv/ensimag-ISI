@@ -10,7 +10,6 @@
  */
 #define NUM_REG (5)
 #define STACK_CAPACITY (512)
-#define PROCESS_COUNT (2)
 
 typedef enum {
     RUNNING,
@@ -27,8 +26,6 @@ typedef struct process {
 
 extern void idle(void);
 extern void init_processes(void);
-
-extern void scheduler(void);
 
 // Assembly function
 extern void ctx_sw(uint32_t *current_process, uint32_t *new_process);

@@ -1,4 +1,7 @@
 cpu.h:51:24:hlt	8	static
-processus.c:11:6:idle	48	dynamic,bounded
-processus.c:23:6:proc1	48	dynamic,bounded
-processus.c:35:6:init_processes	64	dynamic,bounded
+processus.c:20:7:get_active_name	8	static
+processus.c:27:9:get_active_pid	8	static
+processus.c:37:6:scheduler	112	dynamic,bounded
+processus.c:52:6:idle	64	dynamic,bounded
+processus.c:69:6:proc1	48	dynamic,bounded
+processus.c:91:6:init_processes	48	dynamic,bounded
