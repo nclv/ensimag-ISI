@@ -248,6 +248,8 @@ void _doprnt(const char *fmt, va_list args, int radix, void (*putc)(char *, regi
 
         if (*fmt == 'l')
             fmt++; /* need it if sizeof(int) < sizeof(long) */
+        if (*fmt == 'l')
+            fmt++; /* need it if sizeof(int) < sizeof(long) */
 
         truncate = FALSE;
 #ifdef DOPRNT_FLOATS
