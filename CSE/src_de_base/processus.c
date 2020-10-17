@@ -32,7 +32,7 @@ static inline int64_t get_active_pid(void) {
  * Implémente la politique d’ordonnancement en choisissant le prochain processus à activer et
  * provoque le changement de processus.
  * 
- * @pre ctx_sw() is defined.
+ * @pre ctx_sw(), get_active_pid(), processes_table and PROCESS_COUNT are defined.
  */
 static void scheduler(void) {
     int64_t current_pid = get_active_pid();
