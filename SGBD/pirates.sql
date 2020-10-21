@@ -36,9 +36,9 @@ create table milieu (
 );
 
 create table galaxies (
-  CodeGal int PRIMARY KEY,
-  NomGalaxie char not null,
-  Distance int not null check(Distance > 0)
+    CodeGal int PRIMARY KEY,
+    NomGalaxie char not null,
+    Distance int not null check(Distance > 0)
 );
 
 create table planetes (
@@ -65,7 +65,8 @@ create table naviresTransport (
     NbPilotes int not null,
     Vmax float not null,
     Tmin float not null,
-    Tmax float not null
+    Tmax float not null,
+    check(Tmin <= Tmax)
 );
 
 create table peutcibler (
@@ -118,3 +119,5 @@ create table affectationnavires (
     CodeMis int not null references missions(CodeMis),
     PRIMARY KEY (CodeNav, CodeMis)
 );
+
+-- mettre en commentaire les contraintes de contexte
