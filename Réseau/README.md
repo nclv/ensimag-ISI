@@ -10,3 +10,4 @@ Lorsque l'on définit les ports associés à chaque VLAN, il y a 3 modes: Untagg
 L'avantage du mode Tagged est la possibilité d'avoir un serveur pouvant communiquer avec toutes les stations des VLANs sans que les VLANs ne puissent communiquer entre eux.
 
  - No : Aucune configuration dans le VLAN. 
+
