@@ -26,6 +26,7 @@ typedef struct process {
 
 extern void idle(void);
 extern void init_processes(void);
+extern void scheduler(void);
 
 // Assembly function
 extern void ctx_sw(uint32_t *current_process, uint32_t *new_process);

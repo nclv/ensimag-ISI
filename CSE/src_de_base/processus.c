@@ -5,7 +5,7 @@
 
 #include "cpu.h"
 
-#define PROCESS_COUNT (2)
+#define PROCESS_COUNT (8)
 
 process_t processes_table[PROCESS_COUNT];
 /* Pointeur vers le processus actif dans processes_table */
@@ -34,7 +34,7 @@ static inline int64_t get_active_pid(void) {
  * 
  * @pre ctx_sw(), get_active_pid(), processes_table and PROCESS_COUNT are defined.
  */
-static void scheduler(void) {
+void scheduler(void) {
     int64_t current_pid = get_active_pid();
     /* On loop sur chaque process à la suite */
     int64_t new_pid = (current_pid + 1) % PROCESS_COUNT;
@@ -60,9 +60,12 @@ void idle(void) {
     // }
 
     // for (;;) {
-    for (size_t i = 0; i < 3; ++i) {
+    for (size_t i = 0; i < 2; ++i) {
         printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
-        scheduler();
+        // scheduler();
+        sti();
+        hlt();
+        cli();
     }
     printf("[idle] j'arrete le systeme\n");
     hlt();
@@ -81,8 +84,100 @@ static void proc1(void) {
 
     for (;;) {
         printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
-        scheduler();
+        // scheduler();
+        sti();
+        hlt();
+        cli();
     }
+}
+
+static void proc2(void) {
+    for (;;) {
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // scheduler();
+        sti();
+        hlt();
+        cli();
+    }
+}
+
+static void proc3(void) {
+    for (;;) {
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // scheduler();
+        sti();
+        hlt();
+        cli();
+    }
+}
+
+static void proc4(void) {
+    for (;;) {
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // scheduler();
+        sti();
+        hlt();
+        cli();
+    }
+}
+
+static void proc5(void) {
+    for (;;) {
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // scheduler();
+        sti();
+        hlt();
+        cli();
+    }
+}
+
+static void proc6(void) {
+    for (;;) {
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // scheduler();
+        sti();
+        hlt();
+        cli();
+    }
+}
+
+static void proc7(void) {
+    for (;;) {
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // scheduler();
+        sti();
+        hlt();
+        cli();
+    }
+}
+
+/**
+ * Création d'un processus.
+ * 
+ * @param proc fonction du processus
+ * @param name nom du processus créer
+ * 
+ * @return created processus pid, else -1
+ */ 
+int32_t cree_processus(void (*proc)(void), char *name) {
+    int32_t my_pid = (int32_t)++pid;
+    if (my_pid == PROCESS_COUNT) {
+        return -1;
+    }
+
+    /** 
+     * La case de la zone de sauvegarde des registres correspondant à %esp (ie. deuxième case)
+     * doit pointer sur le sommet de pile, et la case en sommet de pile doit contenir l’adresse 
+     * de la fonction proc1.
+     */
+    process_t *proc_t = &processes_table[my_pid];
+    proc_t->pid = my_pid;
+    snprintf(proc_t->name, sizeof(proc_t->name), "%s", name);
+    proc_t->state = READY_TO_RUN;
+    proc_t->registers[1] = (uint32_t)&proc_t->stack[STACK_CAPACITY - 1];
+    proc_t->stack[STACK_CAPACITY - 1] = (uint32_t)proc;
+    
+    return my_pid;
 }
 
 /**
@@ -100,22 +195,26 @@ void init_processes(void) {
      * sauvegarde de %esp pour idle puisque ce processus sera exécuté directement par la 
      * fonction kernel_start.
      */
-    process_t *idle = &processes_table[0];
-    idle->pid = ++pid;
+
+    process_t *idle = &processes_table[++pid];
+    idle->pid = pid;
     snprintf(idle->name, sizeof(idle->name), "%s", "idle");
     idle->state = RUNNING;
     // idle est le process actif
     active = idle;
 
-    /** 
-     * La case de la zone de sauvegarde des registres correspondant à %esp (ie. deuxième case)
-     * doit pointer sur le sommet de pile, et la case en sommet de pile doit contenir l’adresse 
-     * de la fonction proc1.
-     */
-    process_t *proc1_t = &processes_table[1];
-    proc1_t->pid = ++pid;
-    snprintf(proc1_t->name, sizeof(proc1_t->name), "%s", "proc1");
-    proc1_t->state = READY_TO_RUN;
-    proc1_t->registers[1] = (uint32_t)&proc1_t->stack[STACK_CAPACITY - 1];
-    proc1_t->stack[STACK_CAPACITY - 1] = (uint32_t)proc1;
+    char *name = (char *)"proc1";
+    cree_processus(proc1, name);
+    name = (char *)"proc2";
+    cree_processus(proc2, name);
+    name = (char *)"proc3";
+    cree_processus(proc3, name);
+    name = (char *)"proc4";
+    cree_processus(proc4, name);
+    name = (char *)"proc5";
+    cree_processus(proc5, name);
+    name = (char *)"proc6";
+    cree_processus(proc6, name);
+    name = (char *)"proc7";
+    cree_processus(proc7, name);
 }

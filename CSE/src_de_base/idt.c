@@ -15,6 +15,7 @@
 #include "console.h"
 #include "inttypes.h"
 #include "io.h"
+#include "processus.h"
 #include "segment.h"
 #include "stdbool.h"
 #include "stdio.h"
@@ -88,6 +89,8 @@ static inline void get_hour(char *hour, uint32_t seconds) {
  * @pre pic_acknowledge() from io.c. console_write_hour() from console.c. CLOCK_FREQ and get_hour() are defined.
  * 
  * Called in traitant.S
+ * 
+ * TODO: point d'arrêt pour ragrder l'affichage de l'horloge
  */
 void tic_PIT(void) {
     pic_acknowledge();
@@ -106,6 +109,7 @@ void tic_PIT(void) {
         get_hour(hour, (compteur / CLOCKFREQ));
         console_write_hour(hour);
     }
+    scheduler();
 }
 
 /** 
