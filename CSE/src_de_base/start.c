@@ -4,9 +4,8 @@
 #include "console.h"
 #include "cpu.h"
 #include "idt.h"
+#include "io.h"
 #include "processus.h"
-
-void init_clock(void);
 
 void kernel_start(void) {
     /*init_console();
@@ -40,11 +39,11 @@ void kernel_start(void) {
     */
     init_console();
 
-    // cli(); // désactivation/masquage de toutes les interruptions externes
-
     printf("Initialisation de l'horloge programmable:  ");
     init_clock();
     console_write_color("Success\n", 0);
+
+    // cli(); // désactivation/masquage de toutes les interruptions externes
 
     printf("Initialisation de la table des vecteurs d'interruption:  ");
     init_idt();
@@ -58,20 +57,20 @@ void kernel_start(void) {
     init_processes();
     console_write_color("Success\n", 0);
 
-    idle();
+    sti();  // activation/démasquage des interruptions externes
 
     // char hour[] = "00:00:00";
     // console_write_hour(hour);
 
-    // sti();  // activation/démasquage des interruptions externes
+    idle();
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
-        /* 
-            La fonction hlt() est définie dans cpu.h: elle a pour effet d’endormir le processeur (pour économiser de l’énergie). 
-            Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
-            démasquées avant d’appeler cette fonction.
-        */
+        /** 
+         * La fonction hlt() est définie dans cpu.h: elle a pour effet d’endormir le processeur (pour économiser de l’énergie).
+         * Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
+         * démasquées avant d’appeler cette fonction.
+         */
         hlt();
     }
 }

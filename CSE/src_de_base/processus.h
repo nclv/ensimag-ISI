@@ -14,12 +14,15 @@
 typedef enum {
     RUNNING,
     READY_TO_RUN,
+    SLEEPING,
+    DEAD,
 } state_t;
 
 typedef struct process {
     int64_t pid;  // signed int return -1 if error
     char name[MAX_LEN];
     state_t state;
+    uint32_t awake_in;
     uint32_t registers[NUM_REG];     // zone de sauvegarde des registres du processeur
     uint32_t stack[STACK_CAPACITY];  // pile d’exécution du processus,
 } process_t;

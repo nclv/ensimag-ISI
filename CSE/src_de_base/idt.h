@@ -21,6 +21,7 @@ typedef void (*interrupt_handler_t)(void);
 
 extern void init_idt(void);
 extern void masque_IRQ(uint32_t num_IRQ, bool masque);
+extern uint32_t get_uptime(void);
 
 // Interrupt handlers
 // Extern asm functions defined in traitants.S

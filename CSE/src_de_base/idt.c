@@ -26,6 +26,7 @@
 #define IDT_BASE (0x1000)
 
 static idt_ptr_t idt_ptr;
+static uint32_t uptime = 0;
 
 /**
  * Initialisation de la table des vecteurs d’interruption
@@ -83,6 +84,15 @@ static inline void get_hour(char *hour, uint32_t seconds) {
 }
 
 /**
+ * Renvoie l'uptime
+ * 
+ * @return uptime
+ */ 
+uint32_t get_uptime(void) {
+    return uptime;
+}
+
+/**
  * ISR (Interrupt Service Routine)
  * Programmable Interval Timer
  * 
@@ -108,6 +118,7 @@ void tic_PIT(void) {
     if (compteur % CLOCKFREQ == 0) {
         get_hour(hour, (compteur / CLOCKFREQ));
         console_write_hour(hour);
+        uptime++;
     }
     scheduler();
 }

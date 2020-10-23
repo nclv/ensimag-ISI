@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "cpu.h"
+#include "idt.h"
 
 #define PROCESS_COUNT (8)
 
@@ -35,19 +36,49 @@ static inline int64_t get_active_pid(void) {
  * @pre ctx_sw(), get_active_pid(), processes_table and PROCESS_COUNT are defined.
  */
 void scheduler(void) {
+    // récupération du processus actif
     int64_t current_pid = get_active_pid();
+    process_t *current_process = &processes_table[current_pid];
+
+    // Mise à jour de l'état SLEEPING de tous les processus.
+    for(int i = 1; i < PROCESS_COUNT; ++i){
+        process_t *proc_t = &processes_table[i];
+        if(proc_t->awake_in < get_uptime() && proc_t->state == SLEEPING){
+            proc_t->state = READY_TO_RUN;
+        }
+    }
+
     /* On loop sur chaque process à la suite */
     int64_t new_pid = (current_pid + 1) % PROCESS_COUNT;
-
-    process_t *current_process = &processes_table[current_pid];
     process_t *new_process = &processes_table[new_pid];
 
-    current_process->state = READY_TO_RUN;
+    // On prend le prochain processus READY_TO_RUN
+    while (new_pid != current_pid && new_process->state != READY_TO_RUN){
+        new_pid = (new_pid + 1) % PROCESS_COUNT;
+        new_process = &processes_table[new_pid];
+    }
+
+    if (current_process->state == RUNNING) {
+        current_process->state = READY_TO_RUN;
+    }
     new_process->state = RUNNING;
 
     active = new_process;
 
     ctx_sw(current_process->registers, new_process->registers);
+}
+
+void sleep(uint32_t nbr_secs) {
+    int64_t current_pid = get_active_pid();
+    process_t *current_process = &processes_table[current_pid];
+    current_process->state = SLEEPING;
+    current_process->awake_in = get_uptime() + nbr_secs;
+    scheduler();
+}
+
+void kill(void) {
+    active->state = DEAD;
+    scheduler();
 }
 
 void idle(void) {
@@ -59,9 +90,9 @@ void idle(void) {
     //     printf("[idle] proc1 m'a redonne la main --'\n");
     // }
 
-    // for (;;) {
-    for (size_t i = 0; i < 2; ++i) {
-        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+    for (;;) {
+    // for (size_t i = 0; i < 20; ++i) {
+        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
@@ -82,13 +113,17 @@ static void proc1(void) {
     // printf("[proc1] j'arrete le systeme\n");
     // hlt();
 
-    for (;;) {
+    // for (;;) {
+    for (size_t i = 0; i < 2; ++i) {
         printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
         cli();
+        sleep(2);
     }
+    printf("[proc1] I kill myself\n");
+    kill();
 }
 
 static void proc2(void) {
@@ -98,6 +133,7 @@ static void proc2(void) {
         sti();
         hlt();
         cli();
+        sleep(3);
     }
 }
 
@@ -108,12 +144,13 @@ static void proc3(void) {
         sti();
         hlt();
         cli();
+        sleep(5);
     }
 }
 
 static void proc4(void) {
     for (;;) {
-        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
@@ -123,7 +160,7 @@ static void proc4(void) {
 
 static void proc5(void) {
     for (;;) {
-        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
@@ -133,7 +170,7 @@ static void proc5(void) {
 
 static void proc6(void) {
     for (;;) {
-        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
@@ -143,7 +180,7 @@ static void proc6(void) {
 
 static void proc7(void) {
     for (;;) {
-        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
@@ -158,7 +195,7 @@ static void proc7(void) {
  * @param name nom du processus créer
  * 
  * @return created processus pid, else -1
- */ 
+ */
 int32_t cree_processus(void (*proc)(void), char *name) {
     int32_t my_pid = (int32_t)++pid;
     if (my_pid == PROCESS_COUNT) {
@@ -174,9 +211,10 @@ int32_t cree_processus(void (*proc)(void), char *name) {
     proc_t->pid = my_pid;
     snprintf(proc_t->name, sizeof(proc_t->name), "%s", name);
     proc_t->state = READY_TO_RUN;
+    proc_t->awake_in = 0;
     proc_t->registers[1] = (uint32_t)&proc_t->stack[STACK_CAPACITY - 1];
     proc_t->stack[STACK_CAPACITY - 1] = (uint32_t)proc;
-    
+
     return my_pid;
 }
 
@@ -200,21 +238,45 @@ void init_processes(void) {
     idle->pid = pid;
     snprintf(idle->name, sizeof(idle->name), "%s", "idle");
     idle->state = RUNNING;
+    idle->awake_in = 0;
     // idle est le process actif
     active = idle;
 
     char *name = (char *)"proc1";
-    cree_processus(proc1, name);
+    int32_t proc_pid;
+    proc_pid = cree_processus(proc1, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
+
     name = (char *)"proc2";
-    cree_processus(proc2, name);
+    proc_pid = cree_processus(proc2, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
     name = (char *)"proc3";
-    cree_processus(proc3, name);
+    proc_pid = cree_processus(proc3, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
     name = (char *)"proc4";
-    cree_processus(proc4, name);
+    proc_pid = cree_processus(proc4, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
     name = (char *)"proc5";
-    cree_processus(proc5, name);
+    proc_pid = cree_processus(proc5, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
     name = (char *)"proc6";
-    cree_processus(proc6, name);
+    proc_pid = cree_processus(proc6, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
     name = (char *)"proc7";
-    cree_processus(proc7, name);
+    proc_pid = cree_processus(proc7, name);
+    if (proc_pid == -1) {
+        printf("ERROR: %s cannot be created", name);
+    }
 }

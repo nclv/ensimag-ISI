@@ -1,5 +1,6 @@
-idt.c:47:20:init_idt_entry	24	static
-idt.c:65:13:init_idt	16	dynamic,bounded
-idt.c:81:20:get_hour	64	dynamic,bounded
-idt.c:95:6:tic_PIT	48	dynamic,bounded
-idt.c:124:6:masque_IRQ	48	dynamic,bounded
+idt.c:48:20:init_idt_entry	24	static
+idt.c:66:13:init_idt	16	dynamic,bounded
+idt.c:82:20:get_hour	64	dynamic,bounded
+idt.c:91:10:get_uptime	8	static
+idt.c:105:6:tic_PIT	48	dynamic,bounded
+idt.c:135:6:masque_IRQ	48	dynamic,bounded
