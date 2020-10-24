@@ -1,6 +1,6 @@
-src/utils.c:8:10:allocate_matrix	64	static
-src/utils.c:18:6:free_matrix	48	static
-src/utils.c:25:6:random_matrix2d_dyn	64	static
-src/utils.c:33:6:random_array1d	48	static
-src/utils.c:39:6:display_matrix_dyn	80	static
-src/utils.c:48:6:display_array	64	static
+utils.c:8:10:allocate_matrix	64	static
+utils.c:18:6:free_matrix	48	static
+utils.c:25:6:random_matrix2d_dyn	64	static
+utils.c:33:6:random_array1d	48	static
+utils.c:39:6:display_matrix_dyn	80	static
+utils.c:48:6:display_array	48	static
