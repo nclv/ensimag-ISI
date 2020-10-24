@@ -1,4 +1,4 @@
 test_transposition.c:10:6:generic_transpose_ligne	32	static
 test_transposition.c:19:6:generic_transpose_block	32	static
 test_transposition.c:28:6:generic_transpose_rec	32	static
-test_transposition.c:37:5:main	80	static
+test_transposition.c:37:5:main	112	static

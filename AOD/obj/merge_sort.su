@@ -1,2 +1,2 @@
-src/merge_sort.c:5:6:merge	64	static
-src/merge_sort.c:28:6:mergesort	160	static
+merge_sort.c:5:6:merge	64	static
+merge_sort.c:28:6:mergesort	80	static

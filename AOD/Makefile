@@ -23,8 +23,10 @@ obj/%.o: src/%.c
 	$(info )
 	$(info Call gcc to generate $@ from $<)
 
+clean-tests:
+	rm -rf obj/test_* bin/*
+
 clean:
-	rm -rf obj/* bin/*
+	rm -rf bin/* obj/*
 
-
-.PHONY: all clean
+.PHONY: all clean clean-test

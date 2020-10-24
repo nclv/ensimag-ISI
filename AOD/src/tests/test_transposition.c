@@ -59,7 +59,8 @@ int main(void) {
     t_transposition_args transposition_args = {.matrix = A, .result = B};
     t_args_wrapper args_wrapper = {.mergesort_args = NULL,
                                    .transposition_args = &transposition_args,
-                                   .array2d_min_max_args = NULL};
+                                   .array2d_min_max_args = NULL,
+                                   .jacobi_args = NULL};
     printf("\ntranspose_ligne\n");
     generic_fn_execution_time(&args_wrapper, generic_transpose_ligne);
     printf("\ntranspose_block\n");

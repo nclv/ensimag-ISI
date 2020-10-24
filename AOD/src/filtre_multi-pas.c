@@ -4,17 +4,28 @@
 #include <unistd.h>
 
 #include "const.h"
+#include "utils.h"
 
 #define sum(a, b, c) ((a) + (b) + (c))
 
+int mod(int a, int b) {
+    int r = a % b;
+    return r < 0 ? r + b : r;
+}
+
+/**
+ * @param _m doit être pair
+ */ 
 void jacobi_pas_pair(size_t _n, E *A, size_t _m) {
     for (size_t t = 0; t < _m; t += 2) {
         E tmp[_n];
         for (size_t i = 0; i < _n; ++i) { // pas 2t + 1
-            tmp[i] = sum(A[(i - 1) % _n], A[i], A[(i + 1) % _n]);
+            tmp[i] = sum(A[mod((int)i - 1, (int)_n)], A[i], A[mod((int)i + 1, (int)_n)]);
+            // printf("tmp %f\n", tmp[i]);
         }
         for (size_t i = 0; i < _n; ++i) { // pas 2t + 2
-            A[i] = sum(tmp[(i - 1) % _n], tmp[i], tmp[(i + 1) % _n]);
+            A[i] = sum(tmp[mod((int)i - 1, (int)_n)], tmp[i], tmp[mod((int)i + 1, (int)_n)]);
+            // printf("A %f\n", A[i]);
         }
     }
 }
@@ -36,31 +47,31 @@ void jacobi_pas_pair_inplace(size_t _n, E *A, size_t _m) {
 // on peut améliorer cette solution en faisant la boucle de _n − 1 à 0 et en utilisant A[-1].
 void jacobi_pas_pair_inplace_realloc(size_t _n, E *A, size_t _m) {
     // reallocation pour avoir A[_n] = A[0]
-    E *tmpA = realloc(A, (_n + 1) * sizeof *tmpA);
+    E *tmpA = calloc(_n + 1, sizeof *tmpA);
     if (tmpA == NULL) EXIT_FAILURE;
-    A = tmpA;
+    for (size_t i = 0; i < _n; ++i) {
+        tmpA[i] = A[i];
+    }
 
     for (size_t t = 0; t < _m; ++t) {
-        E old = A[_n - 1];  // circulaire
-        A[_n] = A[0];  // circulaire
+        E old = tmpA[_n - 1];  // circulaire
+        tmpA[_n] = tmpA[0];  // circulaire
         for (size_t i = 0; i < _n; ++i) { // pas t
-            E tmp = A[i];
-            A[i] = sum(old, A[i], A[i + 1]);
+            E tmp = tmpA[i];
+            tmpA[i] = sum(old, tmpA[i], tmpA[i + 1]);
             old = tmp;
         }
     }
-
-    // reallocation pour revenir à A de taille _n
-    tmpA = realloc(A, _n * sizeof *tmpA);
-    if (tmpA == NULL) EXIT_FAILURE;
-    A = tmpA;
+    /* printf("Array tmpA (realloc)\n");
+    display_array(tmpA, _n + 1); */
+    free(tmpA);
 }
 
 /**
  * Calcul du triangle inférieur.
  * 
- * En entrée on a l'horizontale A(i - K, 0) ... A(i + K, 0) stockée dans
- * A[i - K, ..., i + K]. i est le milieu de l'horizontale
+ * En entrée on a l'horizontale A(i - K, 0) ... A(i + K, 0) stockée dans A[i - K, ..., i + K]. 
+ * i est le milieu de l'horizontale
  * 
  * On calcule les diagonales 
  *  - Nord-Ouest: A(i - K + 1, 1), A(i - K + 2, 2), ..., A(i, K) stockée dans A[i - K + 1, ..., i]
@@ -70,42 +81,86 @@ void jacobi_pas_pair_inplace_realloc(size_t _n, E *A, size_t _m) {
  *  - Nord-Est: A(i, K - 1), A(i + 1, K - 2), ..., A(i + K - 1, 0) stockée dans T[i, i + K - 1]
  */
 void Tinf(size_t _n, size_t i, size_t K, E *A, E *T) {
-    int nb = 2 * K - 1;  // nombre de points à calculer sur l'horizontale
-    int current = i - K + 1;  // abscisse du premier point
+    int nb = (int)(2 * K - 1);  // nombre de points à calculer sur l'horizontale
+    int current = (int)(i - K + 1);  // abscisse du premier point
+    // printf("%d %ld %ld %ld\n", current, i, K, i - K + 1);
     for (; (nb > 0); current += 1, nb -= 2) {  // on décrémente de 2 car on calcul T et A dans la boucle
-        E prev = A[(current - 1) % _n];  // pour le calcul inplace
+        E prev = A[mod((int)current - 1, (int)_n)];  // pour le calcul inplace
         for (int k = 0; k < nb; ++k) {
-            int j = (current + k) % _n;
+            int j = mod((int)current + k, (int)_n);
             T[j] = A[j];
-            A[j] = sum(prev, T[j], A[(j + 1) % _n]);
+            // printf("%f %d %d\n", prev, j, (j + 1) % (int)_n);
+            A[j] = sum(prev, T[j], A[mod((int)j + 1, (int)_n)]);
             prev = T[j];
         }
     }
 }
-
-void losange(size_t _n, size_t i, size_t K, E *A, E *T) {}
+/**
+ * Calcul du losange carré de côté K contenant les points A[i - K, i + K]
+ *
+ * En entrée on a les diagonales
+ *  - Sud-Ouest: A(i, t), A(i - 1, t + 1), ..., A(i - K, t + K) stockée dans A[i, ..., i - K]
+ *  - Sud-Est: A(i, t), A(i + 1, t + 1), ..., A(i + K, t + K) stockée dans A[i, ..., i + K]
+ * et les sous-diagonale
+ *  - Sud-Ouest: A(i, t - 1), A(i - 1, t), ..., A(i - K, t + K - 1) stockée dans T[i, ..., i - K]
+ *  - Sud-Est: A(i, t - 1), A(i + 1, t), ..., A(i + K, t + K - 1) stockée dans T[i, ..., i + K]
+ *
+ * On calcule les diagonales 
+ *  - Nord-Ouest: A(i, t + 2K), A(i - 1, t + 2K - 1), ..., A(i - K + 1, t + K + 1) stockée dans A[i, ..., i - K]
+ *  - Nord-Est: A(i, t + 2K), A(i + 1, t + 2K - 1), ..., A(i + K - 1, t + K + 1) stockée dans A[i, ..., i + K]
+ * et les sous-diagonales
+ *  - Nord-Ouest: A(i, t + 2K - 1), A(i - 1, t + 2K - 2), ..., A(i - K + 1, t + K) stockée dans T[i, ..., i - K]
+ *  - Nord-Est: A(i, t + 2K - 1), A(i + 1, t + 2K - 2), ..., A(i + K - 1, t + K) stockée dans T[i, ..., i + K]
+ */
+void losange(size_t _n, size_t i, size_t K, E *A, E *T) {
+    for (size_t t = 0; t < K; ++t) {
+        int current = (int)(i + t);
+        // printf("current %d %ld %ld\n", current, i, t);
+        for (int k = current; k > current - (int)K; --k) {
+            // calcul des éléments de la diagonale et de la sous-diagonale Sud-Ouest à partir de current
+            int j = mod((int)k, (int)_n);
+            // printf("j %d %d %d\n", (j - 1) % (int)_n, j, (j + 1) % (int)_n);
+            T[j] = sum(T[mod((int)j - 1, (int)_n)], A[j], T[mod((int)j + 1, (int)_n)]);  // sous-diagonale
+            A[j] = sum(A[mod((int)j - 1, (int)_n)], T[j], A[mod((int)j + 1, (int)_n)]);  // diagonale
+        }
+    }
+}
 
 /**
  * Calcul du triangle supérieur.
  * 
  * En entrée on a les diagonales
- *  - Sud-Ouest:
- *  - Sud-Est:
+ *  - Sud-Ouest: A(i, t), A(i - 1, t + 1), ..., A(i - K, t + K) stockée dans A[i, ..., i - K]
+ *  - Sud-Est: A(i, t), A(i + 1, t + 1), ..., A(i + K, t + K) stockée dans A[i, ..., i + K]
  * et les sous-diagonale
- *  - Sud-Ouest:
- *  - Sud-Est:
+ *  - Sud-Ouest: A(i, t - 1), A(i - 1, t), ..., A(i - K, t + K - 1) stockée dans T[i, ..., i - K]
+ *  - Sud-Est: A(i, t - 1), A(i + 1, t), ..., A(i + K, t + K - 1) stockée dans T[i, ..., i + K]
  * 
- * On calcule l'horizontale A(i - K, t + K) ... A(i + K, t + K) stockée dans
- * A[i - K, ..., i + K].
+ * On calcule l'horizontale A(i - K, t + K) ... A(i + K, t + K) stockée dans A[i - K, ..., i + K].
  */
 void Tsup(size_t _n, size_t i, size_t K, E *A, E *T) {
-
+    for (size_t t = 0; t < K; ++t) {  // 2K diagonales à calculer de Sud-Ouest à Nord-Est
+        int current = (int)(i + t);
+        int k = current;  // les deux diagonales partent de k
+        int nb = (int)(K - t);
+        // la sous-diagonale à nb points, la diagonale nb - 1 points
+        for (nb = (int)(K - t - 1); nb > 0; --k, --nb) {
+            // calcul des éléments de la diagonale et de la sous-diagonale Sud-Ouest à partir de current
+            int j = mod((int)k, (int)_n);
+            T[j] = sum(T[mod((int)j - 1, (int)_n)], A[j], T[mod((int)j + 1, (int)_n)]);  // sous-diagonale
+            A[j] = sum(A[mod((int)j - 1, (int)_n)], T[j], A[mod((int)j + 1, (int)_n)]);  // diagonale
+        }
+        int j = mod((int)k, (int)_n);
+        T[j] = A[j];  // sous-diagonale
+        A[j] = sum(T[mod((int)j - 1, (int)_n)], A[j], T[mod((int)j + 1, (int)_n)]);  // sous-diagonale
+    }
 }
 
 void jacobi_CA(size_t _n, E *A, size_t _m) {
     long int Z = sysconf(_SC_LEVEL1_ICACHE_SIZE);
     size_t K = (size_t)Z / 2;  // Z / 2 where Z = 2^15 = 32K
     printf("Z = %ld, K = %ld\n", Z, K);
+    K = _m;  // condition m mod K = 1
 
     // Initialisation de T pour éviter les modulos
     E *T = malloc(_n * sizeof *T);

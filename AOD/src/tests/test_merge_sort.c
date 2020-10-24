@@ -33,7 +33,8 @@ int main(void) {
     t_mergesort_args mergesort_args = {._n = n, .array = array, .buffer = buffer};
     t_args_wrapper args_wrapper = {.mergesort_args = &mergesort_args,
                                    .transposition_args = NULL,
-                                   .array2d_min_max_args = NULL};
+                                   .array2d_min_max_args = NULL,
+                                   .jacobi_args = NULL};
     generic_fn_execution_time(&args_wrapper, generic_mergesort);
 
     free(buffer);

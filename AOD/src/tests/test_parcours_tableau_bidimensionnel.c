@@ -74,7 +74,8 @@ int main(void) {
     t_array2d_min_max_args array2d_min_max_args = {.matrix = A, .line = S, .col = T};
     t_args_wrapper args_wrapper = {.mergesort_args = NULL,
                                    .transposition_args = NULL,
-                                   .array2d_min_max_args = &array2d_min_max_args};
+                                   .array2d_min_max_args = &array2d_min_max_args,
+                                   .jacobi_args = NULL};
     printf("\nline_max_col_min\n");
     generic_fn_execution_time(&args_wrapper, generic_line_max_col_min);
     printf("\nline_max_col_min_opti\n");

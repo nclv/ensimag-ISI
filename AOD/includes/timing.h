@@ -22,11 +22,18 @@ typedef struct array2d_min_max_args {
     double *col;
 } t_array2d_min_max_args;
 
+typedef struct jacobi_args {
+    size_t _n;
+    E *array;
+    size_t _m;
+} t_jacobi_args;
+
 // Wrapper
 typedef struct args_wrapper {
     t_mergesort_args *mergesort_args;
     t_transposition_args *transposition_args;
     t_array2d_min_max_args *array2d_min_max_args;
+    t_jacobi_args *jacobi_args;
 } t_args_wrapper;
 
 extern void generic_fn_execution_time(t_args_wrapper *args_wrapper,
