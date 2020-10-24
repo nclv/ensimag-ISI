@@ -17,7 +17,9 @@ void generic_mergesort(t_args_wrapper *args_wrapper) {
 
 int main(void) {
     E *array = malloc(n * sizeof *array);
+    if (array == NULL) EXIT_FAILURE;
     E *buffer = calloc(n, sizeof *buffer);
+    if (buffer == NULL) EXIT_FAILURE;
     random_array1d(array, n);
 
     // display_array(array, n);

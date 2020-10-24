@@ -35,8 +35,11 @@ void generic_line_max_col_min_block(t_args_wrapper *args_wrapper) {
 
 int main(void) {
     double **A = allocate_matrix(n, m);
+    if (A == NULL) EXIT_FAILURE;
     double *S = malloc(n * sizeof *S);
+    if (S == NULL) EXIT_FAILURE;
     double *T = malloc(m * sizeof *T);
+    if (T == NULL) EXIT_FAILURE;
     random_matrix2d_dyn(A, n, m);
 
     // printf("Matrice A\n");

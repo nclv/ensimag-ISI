@@ -36,7 +36,9 @@ void generic_transpose_rec(t_args_wrapper *args_wrapper) {
 
 int main(void) {
     double **A = allocate_matrix(n, m);
+    if (A == NULL) EXIT_FAILURE;
     double **B = allocate_matrix(n, m);
+    if (B == NULL) EXIT_FAILURE;
     random_matrix2d_dyn(A, n, m);
 
     // printf("Matrice A\n");

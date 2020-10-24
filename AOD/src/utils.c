@@ -7,10 +7,12 @@
 
 double** allocate_matrix(size_t _n, size_t _m) {
     double** matrix = malloc(_n * sizeof(double*));
+    if (matrix == NULL) EXIT_FAILURE;
     size_t i;
 
     for (i = 0; i < _n; ++i) {
         matrix[i] = malloc(_m * sizeof(double));
+        if (matrix[i] == NULL) EXIT_FAILURE;
     }
     return matrix;
 }
