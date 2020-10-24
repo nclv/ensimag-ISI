@@ -1,3 +1,5 @@
+package rational;
+
 public class Vector {
     /**
      * The internal array used to hold members of a Vector. The elements are in
@@ -77,6 +79,14 @@ public class Vector {
         this.rationalCount = rationals.length;
         ensureCapacity(2 * rationals.length);
     }
+
+    public Rational get(int i) {
+		return this.rationals[i];
+	}
+
+	public void set(int i, Rational r) {
+		this.rationals[i] = r;	// shallow copy
+	}
 
     /**
      * Ensures that minCapacity elements can fit within this Vector. If rationals is
@@ -170,7 +180,22 @@ public class Vector {
         return rationalCount == 0;
     }
 
-    // return string representation of (this)
+    public void mult(Rational r) {
+		for (int i = 0; i < size(); i++) {
+			rationals[i].mult(r);
+		}
+	}
+
+	public void add(Vector v) {
+		if (this.size() != v.size())
+			throw new IllegalArgumentException("Vectors of different sizes.");
+
+		for (int i = 0; i < this.size(); i++) {
+			this.rationals[i].add(v.get(i));
+		}
+	}
+
+    @Override
     public String toString() {
         String s = "(";
         for (int i = 0; i < this.rationalCount; ++i) {

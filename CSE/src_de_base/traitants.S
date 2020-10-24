@@ -8,7 +8,7 @@ traitant_IT_32:
     pushl %edx
     pushl %ecx
 # appel a la fonction C realisant le traitant
-# Programmable Interrupt Timer
+# Programmable Interval Timer
     call tic_PIT
 # restauration des registres importants
     popl %ecx

@@ -32,9 +32,9 @@ static inline unsigned int hard_bsr(unsigned int n) {
             : "d"(x1), "a"(x0), "g"((y)))
 
 unsigned long long do_div64(unsigned long long x, unsigned long long y, unsigned long long *rem) {
-    unsigned int y1 = y >> 32;
+    unsigned int y1 = (unsigned)(y >> 32);
     unsigned int y0 = y & 0xffffffff;
-    unsigned int x1 = x >> 32;
+    unsigned int x1 = (unsigned)(x >> 32);
     unsigned int x0 = x & 0xffffffff;
     if (y1) {
         do {

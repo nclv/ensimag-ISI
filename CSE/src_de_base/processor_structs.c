@@ -133,7 +133,7 @@ extern char pgdir[];
 
 static void setup_idt(void) {
     struct pseudo_descriptor pdesc;
-    int i;
+    unsigned long i;
 
     memset(idt, 0, sizeof(idt));
 
@@ -141,12 +141,12 @@ static void setup_idt(void) {
         unsigned access;
         struct x86_tss *ts = trap_tss + i;
         ts->ss0 = KERNEL_DS;
-        ts->esp0 = (unsigned)(trap_stack + sizeof(trap_stack));
+        ts->esp0 = (int)(trap_stack + sizeof(trap_stack));
         ts->ss = KERNEL_DS;
         ts->esp = ts->esp0;
         ts->io_bit_map_offset = sizeof(struct x86_tss);
         ts->cs = KERNEL_CS;
-        ts->eip = exception_handler_tasks[i];
+        ts->eip = (int)exception_handler_tasks[i];
         ts->ds = KERNEL_DS;
         ts->es = KERNEL_DS;
         ts->fs = 0;
@@ -156,7 +156,7 @@ static void setup_idt(void) {
         ts->cr3 = (int)pgdir;
         access = ACC_TASK_GATE;
         access += (i == 3) ? 0x60 : 0;
-        fill_gate(idt + i, 0, TRAP_TSS_BASE + 8 * i, access, 0);
+        fill_gate(idt + i, 0, (unsigned short)(TRAP_TSS_BASE + 8 * i), (unsigned char)access, 0);
     }
 
     pdesc.limit = sizeof(idt) - 1;
@@ -177,7 +177,7 @@ static void setup_tss(void) {
                          : "rm"((unsigned short)(BASE_TSS)));
 }
 
-static void setup_pic() {
+static void setup_pic(void) {
     /* Initialize the master. */
     outb(0x11, 0x20);
     outb(0x20, 0x21);

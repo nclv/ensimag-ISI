@@ -1,0 +1,9 @@
+src/parcours_tableau_bidimensionnel.c:16:6:line_max	32	static
+src/parcours_tableau_bidimensionnel.c:27:6:col_min	32	static
+src/parcours_tableau_bidimensionnel.c:40:6:line_max_col_min	32	static
+src/parcours_tableau_bidimensionnel.c:122:6:generic_line_max_col_min	32	static
+src/parcours_tableau_bidimensionnel.c:62:6:line_max_col_min_opti	32	static
+src/parcours_tableau_bidimensionnel.c:131:6:generic_line_max_col_min_opti	32	static
+src/parcours_tableau_bidimensionnel.c:88:6:line_max_col_min_block	64	static
+src/parcours_tableau_bidimensionnel.c:140:6:generic_line_max_col_min_block	32	static
+src/parcours_tableau_bidimensionnel.c:149:5:main	112	static

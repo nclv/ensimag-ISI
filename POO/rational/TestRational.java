@@ -1,3 +1,5 @@
+package rational;
+
 public class TestRational {
     public static void main(String[] args) {
         Rational x, y, z;

@@ -1,3 +1,5 @@
+package pangolin;
+
 // Le nom de la classe est à votre convenance.
 // L'usage est d'appeler TestXXX une classe qui contient le programme principal
 public class TestPangolin {

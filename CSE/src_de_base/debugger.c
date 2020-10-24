@@ -10,8 +10,8 @@ static void write_hex(int line, int col, int length, unsigned long value) {
     char *p = screen_base + ((line - 1) * 160 + (col + length - 1) * 2);
     char disp[16];
     int i;
-    for (i = 0; i < 10; i++) disp[i] = '0' + i;
-    for (i = 0; i < 6; i++) disp[i + 10] = 'A' + i;
+    for (i = 0; i < 10; i++) disp[i] = '0' + (char)i;
+    for (i = 0; i < 6; i++) disp[i + 10] = 'A' + (char)i;
     while (length-- > 0) {
         p -= 2;
         *p = disp[value & 15];
@@ -24,7 +24,7 @@ static void dump_registers(unsigned trapno, unsigned error_code, struct x86_tss 
     k = 0;
     for (i = 0; i < 25; i++) {
         for (j = 0; j < 80; j++) {
-            screen_base[i * 160 + j * 2] = task_dump_screen[k++];
+            screen_base[i * 160 + j * 2] = (char)task_dump_screen[k++];
         }
         k++;
     }
@@ -40,32 +40,32 @@ static void dump_registers(unsigned trapno, unsigned error_code, struct x86_tss 
     write_hex(7, 21, 2, trapno);
     write_hex(7, 60, 8, error_code);
     write_hex(9, 21, 8, (unsigned long)t);
-    write_hex(9, 69, 4, t->back_link);
-    write_hex(11, 11, 8, t->esp);
-    write_hex(11, 32, 4, t->ss);
-    write_hex(11, 52, 8, t->esp0);
-    write_hex(11, 74, 4, t->ss0);
-    write_hex(13, 11, 8, t->esp1);
-    write_hex(13, 32, 4, t->ss1);
-    write_hex(13, 52, 8, t->esp2);
-    write_hex(13, 74, 4, t->ss2);
-    write_hex(15, 15, 8, t->eip);
-    write_hex(15, 41, 4, t->cs);
-    write_hex(15, 66, 8, t->eflags);
-    write_hex(17, 10, 8, t->eax);
-    write_hex(17, 30, 8, t->ebx);
-    write_hex(17, 50, 8, t->ecx);
-    write_hex(17, 70, 8, t->edx);
-    write_hex(19, 10, 8, t->esi);
-    write_hex(19, 30, 8, t->edi);
-    write_hex(19, 50, 8, t->ebp);
-    write_hex(19, 72, 4, t->ldt);
-    write_hex(21, 12, 4, t->ds);
-    write_hex(21, 32, 4, t->es);
-    write_hex(21, 52, 4, t->fs);
-    write_hex(21, 72, 4, t->gs);
-    write_hex(23, 30, 8, t->cr3);
-    write_hex(23, 70, 1, t->trace_trap & 1);
+    write_hex(9, 69, 4, (unsigned long)t->back_link);
+    write_hex(11, 11, 8, (unsigned long)t->esp);
+    write_hex(11, 32, 4, (unsigned long)t->ss);
+    write_hex(11, 52, 8, (unsigned long)t->esp0);
+    write_hex(11, 74, 4, (unsigned long)t->ss0);
+    write_hex(13, 11, 8, (unsigned long)t->esp1);
+    write_hex(13, 32, 4, (unsigned long)t->ss1);
+    write_hex(13, 52, 8, (unsigned long)t->esp2);
+    write_hex(13, 74, 4, (unsigned long)t->ss2);
+    write_hex(15, 15, 8, (unsigned long)t->eip);
+    write_hex(15, 41, 4, (unsigned long)t->cs);
+    write_hex(15, 66, 8, (unsigned long)t->eflags);
+    write_hex(17, 10, 8, (unsigned long)t->eax);
+    write_hex(17, 30, 8, (unsigned long)t->ebx);
+    write_hex(17, 50, 8, (unsigned long)t->ecx);
+    write_hex(17, 70, 8, (unsigned long)t->edx);
+    write_hex(19, 10, 8, (unsigned long)t->esi);
+    write_hex(19, 30, 8, (unsigned long)t->edi);
+    write_hex(19, 50, 8, (unsigned long)t->ebp);
+    write_hex(19, 72, 4, (unsigned long)t->ldt);
+    write_hex(21, 12, 4, (unsigned long)t->ds);
+    write_hex(21, 32, 4, (unsigned long)t->es);
+    write_hex(21, 52, 4, (unsigned long)t->fs);
+    write_hex(21, 72, 4, (unsigned long)t->gs);
+    write_hex(23, 30, 8, (unsigned long)t->cr3);
+    write_hex(23, 70, 1, (unsigned long)t->trace_trap & 1);
 }
 
 static struct x86_tss *tss_sel_2_tss(unsigned short sel) {
@@ -80,14 +80,14 @@ void trap_handler(unsigned trapno, unsigned error_code) {
     unsigned long tr;
     __asm__ __volatile__("str %%eax"
                          : "=a"(tr));
-    struct x86_tss *t = tss_sel_2_tss(tss_sel_2_tss(tr)->back_link);
+    struct x86_tss *t = tss_sel_2_tss((unsigned short)tss_sel_2_tss((unsigned short)tr)->back_link);
 
     char d = 1;
     char video_mem[4000];
     memcpy(video_mem, screen_base, sizeof(video_mem));
     dump_registers(trapno, error_code, t);
     while (1) {
-        char c = inb(0x60);
+        unsigned char c = inb(0x60);
         switch (c) {
             case 0x39:  // SPACE
                 d = 1 - d;

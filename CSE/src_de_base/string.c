@@ -196,7 +196,7 @@ size_t __strxspn(const char *s, const char *map, int parity) {
         matchmap[(unsigned char)*map++] = 1;
 
     /* Make sure the null character never matches */
-    matchmap[0] = parity;
+    matchmap[0] = (char)parity;
 
     /* Calculate span length */
     while (matchmap[(unsigned char)*s++] ^ parity)
@@ -377,7 +377,7 @@ size_t strlen(const char *s) {
     const char *ss = s;
     while (*ss)
         ss++;
-    return ss - s;
+    return (size_t)(ss - s);
 }
 /*
  * strnlen()
@@ -394,7 +394,7 @@ size_t strnlen(const char *s, size_t maxlen) {
         ss++;
         maxlen--;
     }
-    return ss - s;
+    return (size_t)(ss - s);
 }
 /*
  * strncat.c

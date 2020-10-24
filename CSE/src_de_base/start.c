@@ -1,28 +1,14 @@
-#include "console.h"
-#include "cpu.h"
 #include <inttypes.h>
 #include <stdio.h>
 
-// on peut s'entrainer a utiliser GDB avec ce code de base
-// par exemple afficher les valeurs de x, n et res avec la commande display
-
-// une fonction bien connue
-uint32_t fact(uint32_t n) {
-    uint32_t res;
-    if (n <= 1) {
-        res = 1;
-    } else {
-        res = fact(n - 1) * n;
-    }
-    return res;
-}
+#include "console.h"
+#include "cpu.h"
+#include "idt.h"
+#include "io.h"
+#include "processus.h"
 
 void kernel_start(void) {
-    uint32_t x = fact(5);
-    // quand on saura gerer l'ecran, on pourra afficher x
-    (void)x;
-
-    init_console();
+    /*init_console();
     printf("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
     // printf("\fa clean one");
     printf("\nA\tB\tC\tD\tE\tF\tG\tH\tI\tJ\tK\tYEESSS");
@@ -31,7 +17,7 @@ void kernel_start(void) {
     printf("\nohohoh\raaaaaahhhh");
     // clear_console();
     const char* string= "Hello there";
-    printf("My string: %s\n5!: %u\n", string, x);
+    printf("My string: %s\n", string);
     printf("\rAA");
 
     clear_console();
@@ -50,21 +36,41 @@ void kernel_start(void) {
     printf("9\n0\n1\n2\n3\n4");
     printf("\t\t\t\tYeahhh\t1\t2\t3\t4\t5\t6");
     printf("Two aliens in space looking at Earth are talking to each other.\n\nThe first alien says, \"The dominant life forms on the Earth planet have developed satellite-based nuclear weapons.\"\n\nThe second alien asks, \"Are they an emerging intelligence?\"\n\n-\n\nThe first alien says, \"I don't think so, they have them aimed at themselves.");
+    */
+    init_console();
 
-    // uint8_t *ptr = (uint8_t *)0xB8000;
-    // *ptr = 'H';
-    // *(ptr + 1) = 'E';
-    // *(ptr + 2) = 'L';
-    // *(ptr + 3) = 'L';
-    // *(ptr + 4) = 'O';
+    printf("Initialisation de l'horloge programmable:  ");
+    init_clock();
+    console_write_color("Success\n", 0);
+
+    // cli(); // désactivation/masquage de toutes les interruptions externes
+
+    printf("Initialisation de la table des vecteurs d'interruption:  ");
+    init_idt();
+    console_write_color("Success\n", 0);
+
+    printf("Demasquage de l'IRQ0 (clock):  ");
+    masque_IRQ(32, 0);
+    console_write_color("Success\n", 0);
+
+    printf("Initialisation des processus:  ");
+    init_processes();
+    console_write_color("Success\n", 0);
+
+    sti();  // activation/démasquage des interruptions externes
+
+    // char hour[] = "00:00:00";
+    // console_write_hour(hour);
+
+    idle();
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
-        /* 
-            La fonction hlt() est définie dans cpu.h: elle a pour effet d’endormir le processeur (pour économiser de l’énergie). 
-            Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
-            démasquées avant d’appeler cette fonction.
-        */
+        /** 
+         * La fonction hlt() est définie dans cpu.h: elle a pour effet d’endormir le processeur (pour économiser de l’énergie).
+         * Le processeur sera réveillé par l’arrivée d’une interruption : il est donc essentiel que les interruptions soient 
+         * démasquées avant d’appeler cette fonction.
+         */
         hlt();
     }
 }
@@ -72,4 +78,4 @@ void kernel_start(void) {
 int main(void) {
     kernel_start();
     return 0;
-} 
+}
