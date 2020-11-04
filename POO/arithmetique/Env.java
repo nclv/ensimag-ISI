@@ -4,15 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Env {
-    Map<String, Double> map = new HashMap<String, Double>();
+    Map<String, Evaluable> map = new HashMap<String, Evaluable>();
 
-    public void associer(String nom, double valeur) {
+    public void associer(String nom, Evaluable valeur) {
         this.map.put(nom, valeur);
     }
 
     public double obtenirValeur(String nom) {
-        double val = this.map.get(nom);
-        return val;
+        return this.map.get(nom).evaluer();
     }
 
     @Override

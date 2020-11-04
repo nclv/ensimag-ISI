@@ -4,10 +4,10 @@ public class TestEval {
 	public static void main(String[] args) {
 		// création de l'environnement
 		Env env = new Env();
-		env.associer("y", 2);
-		env.associer("x", 1);
-		env.associer("a", 9);
-		env.associer("b", 3);
+		env.associer("y", new Constante(2));
+		env.associer("x", new Constante(1));
+		env.associer("a", new Constante(9));
+		env.associer("b", new Constante(3));
 		System.out.println(env);
 
 		ExpAbstraite exp;

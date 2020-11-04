@@ -1,5 +1,5 @@
 package arithmetique;
 
-interface Evaluable {
+public interface Evaluable {
     public double evaluer();
 }

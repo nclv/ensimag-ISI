@@ -1,5 +1,7 @@
 package arithmetique;
 
+import rational.Rational;
+
 import java.util.ArrayList;
 
 public class TestInterfaceEvaluable {
@@ -8,10 +10,10 @@ public class TestInterfaceEvaluable {
 
         // création de l'environnement stockant les valeurs des variables
         Env env = new Env();
-        env.associer("y", 2);
-        env.associer("x", 1);
-        env.associer("a", 9);
-        env.associer("b", 3);
+        env.associer("y", new Constante(2));
+        env.associer("x", new Constante(1));
+        env.associer("a", new Constante(9));
+        env.associer("b", new Constante(3));
 
         // on ajoute quelques expressions...
         ExpAbstraite exp;
@@ -28,8 +30,8 @@ public class TestInterfaceEvaluable {
         list.add(new ExpressionEvaluable(exp, env));
 
         // on ajoute quelques rationnels...
-        list.add(new RationalEvaluable(17, 2));
-        list.add(new RationalEvaluable(9));
+        list.add(new Rational(17, 2));
+        list.add(new Rational(9));
 
 
         // affichage

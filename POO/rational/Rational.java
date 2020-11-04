@@ -1,8 +1,16 @@
 package rational;
+
+import arithmetique.Evaluable;
+
 /**
  * Rational
  */
-public class Rational {
+public class Rational implements Evaluable {
+
+    @Override
+    public double evaluer() {
+        return this.getValue();
+    }
 
     private int numerator, denominator;
 

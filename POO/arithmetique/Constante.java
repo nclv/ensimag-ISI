@@ -1,6 +1,6 @@
 package arithmetique;
 
-public class Constante extends ExpAbstraite{
+public class Constante extends ExpAbstraite implements Evaluable {
     private double valeur;
 
     @Override
@@ -10,6 +10,11 @@ public class Constante extends ExpAbstraite{
 
     @Override
     public double evaluer(Env env) {
+        return this.valeur;
+    }
+
+    @Override
+    public double evaluer() {
         return this.valeur;
     }
 
