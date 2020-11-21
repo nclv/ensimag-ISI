@@ -9,11 +9,46 @@
 #define PROCESS_COUNT (8)
 
 process_t processes_table[PROCESS_COUNT];
+
 /* Pointeur vers le processus actif dans processes_table */
 process_t *active;
 
 /* On incrémente le pid à chaque nouveau process */
 static int64_t pid = -1;
+
+/* Liste des processus */
+void proc1(void);
+void proc2(void);
+void proc3(void);
+void proc4(void);
+void proc5(void);
+void proc6(void);
+void proc7(void);
+
+const char *proc_str[] = {
+    "proc1",
+    "proc2",
+    "proc3",
+    "proc4",
+    "proc5",
+    "proc6",
+    "proc7"
+};
+
+void (*proc_fn[])(void) = {
+    &proc1,
+    &proc2,
+    &proc3,
+    &proc4,
+    &proc5,
+    &proc6,
+    &proc7,
+};
+
+static int get_num_procs(void) {
+	return sizeof(proc_str) / sizeof(char *);
+}
+
 
 /**
  * @return active process name
@@ -42,9 +77,9 @@ void scheduler(void) {
 
     // Mise à jour de l'état SLEEPING de tous les processus.
     for(int i = 1; i < PROCESS_COUNT; ++i){
-        process_t *proc_t = &processes_table[i];
-        if(proc_t->awake_in < get_uptime() && proc_t->state == SLEEPING){
-            proc_t->state = READY_TO_RUN;
+        process_t *proc = &processes_table[i];
+        if(proc->awake_in < get_uptime() && proc->state == SLEEPING){
+            proc->state = READY_TO_RUN;
         }
     }
 
@@ -68,12 +103,23 @@ void scheduler(void) {
     ctx_sw(current_process->registers, new_process->registers);
 }
 
-void sleep(uint32_t nbr_secs) {
+/**
+ * Endors le processus courant.
+ * 
+ * @param nbr_secs
+ * @return -1 if failure, else 0
+ */
+int sleep(uint32_t nbr_secs) {
     int64_t current_pid = get_active_pid();
+    if (current_pid == 0) {
+        // on ne peut pas endormir le processus idle
+        return -1;
+    }
     process_t *current_process = &processes_table[current_pid];
     current_process->state = SLEEPING;
     current_process->awake_in = get_uptime() + nbr_secs;
     scheduler();
+    return 0;
 }
 
 void kill(void) {
@@ -242,41 +288,14 @@ void init_processes(void) {
     // idle est le process actif
     active = idle;
 
-    char *name = (char *)"proc1";
+    /* Création des processus */
+    char *name;
     int32_t proc_pid;
-    proc_pid = cree_processus(proc1, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-
-    name = (char *)"proc2";
-    proc_pid = cree_processus(proc2, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc3";
-    proc_pid = cree_processus(proc3, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc4";
-    proc_pid = cree_processus(proc4, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc5";
-    proc_pid = cree_processus(proc5, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc6";
-    proc_pid = cree_processus(proc6, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc7";
-    proc_pid = cree_processus(proc7, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
+    for (int i = 0; i < get_num_procs(); i++) {
+        name = (char *)proc_str[i];
+        proc_pid = cree_processus(*proc_fn[i], name);
+        if (proc_pid == -1) {
+            printf("ERROR: %s cannot be created", name);
+        }
     }
 }
