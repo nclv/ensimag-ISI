@@ -21,7 +21,7 @@ LD = ld
 OBJCOPY = objcopy
 QEMU = /usr/bin/qemu-system-i386
 
-CFLAGS = -m32 -Wall -Werror -gstabs -std=c99 -Wextra -Wno-implicit-fallthrough  -Wshadow -Wconversion -Wdouble-promotion -Wformat=2 -Wformat-truncation=2 -Wundef -fno-common -fstack-usage -Wfloat-equal -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=4 -Wwrite-strings -Waggregate-return -ffunction-sections -Wl,--gc-sections -Wl,--print-gc-sections -nostdlib -nostdinc -ffreestanding -fpic -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -I. -ggdb
+CFLAGS = -m32 -Wall -Werror -Wno-error -gstabs -std=c99 -Wextra -Wno-implicit-fallthrough  -Wshadow -Wconversion -Wdouble-promotion -Wformat=2 -Wformat-truncation=2 -Wundef -fno-common -fstack-usage -Wfloat-equal -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=4 -Wwrite-strings -Waggregate-return -ffunction-sections -Wl,--gc-sections -Wl,--print-gc-sections -nostdlib -nostdinc -ffreestanding -fpic -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -I. -ggdb
 ASFLAGS = -m32 -DASSEMBLER -g -gstabs -I.
 LDFLAGS = -melf_i386
 # QEMUOPTS = -no-kvm -net nic -net user,tftp="`pwd`",bootfile="$(PXE)" -boot n -cpu pentium -rtc base=localtime -m 64M -gdb tcp::1234 -S

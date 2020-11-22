@@ -1,2 +1,0 @@
-doprnt.c:148:1:printnum	80	dynamic,bounded
-doprnt.c:164:6:_doprnt	144	dynamic,bounded

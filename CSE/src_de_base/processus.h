@@ -34,4 +34,16 @@ extern void scheduler(void);
 // Assembly function
 extern void ctx_sw(uint32_t *current_process, uint32_t *new_process);
 
+/* pqueue structs */
+typedef struct node {
+    process_t *process;
+    int priority;  // les petites valeurs ont une grande priorité
+    // struct node* previous;
+    struct node* next;
+} node_t;
+
+typedef struct pqueue {
+    node_t *head;
+} pqueue_t;
+
 #endif

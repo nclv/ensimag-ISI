@@ -290,7 +290,7 @@ void _doprnt(const char *fmt, va_list args, int radix, void (*putc)(char *, regi
                             (*putc)(putc_arg, c);
                         printnum((unsigned)((u >> (j - 1)) & (unsigned long)((2 << (i - j)) - 1)),
                                  base, putc, putc_arg);
-                    } else if (u & (1 << (i - 1))) {
+                    } else if (u & (long unsigned int)(1 << (i - 1))) {
                         if (any)
                             (*putc)(putc_arg, ',');
                         else {

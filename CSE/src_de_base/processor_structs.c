@@ -72,9 +72,9 @@ static void fill_gate(unsigned long long *entry, unsigned offset,
     unsigned long p0, p1;
 
     p0 = offset & 0xffff;
-    p0 |= selector << 16;
+    p0 |= (long unsigned int)selector << 16;
     p1 = word_count & 0xf;
-    p1 |= (access | ACC_P) << 8;
+    p1 |= (long unsigned int)(access | ACC_P) << 8;
     p1 |= offset & 0xffff0000;
     *entry = (((unsigned long long)p1) << 32) | p0;
 }
