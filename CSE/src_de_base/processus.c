@@ -5,10 +5,19 @@
 
 #include "cpu.h"
 #include "idt.h"
-
+#include "malloc.c.h"
 
 void print_process(process_t *process) {
     printf("Name: %s, State: %d, Priority: %d, Awake in: %d, PID: %lld\n", process->name, process->state, process->priority, process->awake_in, process->pid);
+}
+
+void print_queue(pqueue_t *pqueue) {
+    process_t *process = pqueue->head;
+    printf("Len: %d\n", pqueue->len);
+    while (process != NULL) {
+        print_process(process);
+        process = process->next;
+    }
 }
 
 pqueue_t *create_pqueue(void) {
@@ -27,12 +36,14 @@ process_t *peek(pqueue_t *pqueue) {
 process_t *pop(pqueue_t *pqueue) {
     process_t *process = pqueue->head;
     if (pqueue->head != NULL) pqueue->head = pqueue->head->next;
+    if (pqueue->len-- <= 0) pqueue->len = 0;
     return process;
 }
 
 void push(pqueue_t *pqueue, process_t *process) {
     process_t *current_node = pqueue->head;
     process->next = NULL;
+    if (pqueue->len < 0) print_queue(pqueue);
     if (pqueue->len == 0) {
         pqueue->head = process;
     } else if (current_node->priority > process->priority) {
@@ -52,14 +63,6 @@ void push(pqueue_t *pqueue, process_t *process) {
 
 int is_empty(pqueue_t *pqueue) {
     return (pqueue->head == NULL);
-}
-
-void print_queue(pqueue_t *pqueue) {
-    process_t *process = pqueue->head;
-    while (process != NULL) {
-        print_process(process);
-        process = process->next;
-    }
 }
 
 /* Processes handling */
@@ -136,22 +139,20 @@ void round_robin_scheduler(void) {
     ctx_sw(current_process->registers, new_process->registers);
 }
 
-/* No processes_table */
+/* Round-Robin scheduler with priority and dynamic processes */
 void priority_scheduler(void) {
-    // récupération du processus actif
-    int64_t current_pid = get_active_pid();
-
     // free dead processes
     process_t *current;
     while ((current = pop(pqueue_dead)) != NULL) {
-        // free(current->process);
         current = current->next;
+        free(current);
     }
 
     // update sleeping processes
-    while ((current = pop(pqueue_sleeping)) != NULL && current->awake_in < get_uptime()) {
+    while ((current = peek(pqueue_sleeping)) != NULL && current->awake_in < get_uptime()) {
         current->state = READY_TO_RUN;
-        // add current current to READY_TO_RUN queue
+        // add current current to READY_TO_RUN queue and remove from SLEEPING queue
+        pop(pqueue_sleeping);
         push(pqueue_ready_to_run, current);
         current = current->next;
     }
@@ -160,7 +161,6 @@ void priority_scheduler(void) {
     if ((current = pop(pqueue_ready_to_run)) != NULL) {
         if (active->state == RUNNING) {
             active->state = READY_TO_RUN;
-            int priority = (active->pid == 0) ? RUNNING: READY_TO_RUN;
             push(pqueue_ready_to_run, active);
         }
         current->state = RUNNING;
@@ -195,8 +195,7 @@ int priority_sleep(uint32_t nbr_secs) {
         // on ne peut pas endormir le processus idle
         return -1;
     }
-    printf("Sleeping:\n");
-    printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+    
     active->state = SLEEPING;
     active->awake_in = get_uptime() + nbr_secs;
     push(pqueue_sleeping, active);
@@ -216,11 +215,13 @@ int sleep(uint32_t nbr_secs) {
 
 void round_robin_kill(void) {
     active->state = DEAD;
+    --pid;
     round_robin_scheduler();
 }
 
 void priority_kill(void) {
     active->state = DEAD;
+    --pid;
     push(pqueue_dead, active);
     priority_scheduler();
 }
@@ -240,7 +241,7 @@ void idle(void) {
 
     for (;;) {
     // for (size_t i = 0; i < 20; ++i) {
-        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
         sti();
         hlt();
@@ -264,25 +265,21 @@ void proc1(void) {
     // for (;;) {
     for (size_t i = 0; i < 2; ++i) {
         printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
-        printf("sleeping\n");
-        print_queue(pqueue_sleeping);
-        printf("ready_to_run\n");
-        print_queue(pqueue_ready_to_run);
-        printf("dead\n");
-        print_queue(pqueue_dead);
+        // printf("sleeping\n");
+        // print_queue(pqueue_sleeping);
+        // printf("ready_to_run\n");
+        // print_queue(pqueue_ready_to_run);
+        // printf("dead\n");
+        // print_queue(pqueue_dead);
         // scheduler();
         sti();
         hlt();
         cli();
 
         sleep(2);
-        printf("sleeping\n");
-        print_queue(pqueue_sleeping);
-        printf("ready_to_run\n");
-        print_queue(pqueue_ready_to_run);
     }
     printf("[proc1] I kill myself\n");
-    kill();
+    kill(); // mais on n'en a pas besoin grâce à la terminaison automatique
 }
 
 void proc2(void) {
@@ -309,8 +306,10 @@ void proc3(void) {
 
 void proc4(void) {
     for (;;) {
-        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
+        printf("I kill myself\n");
+        kill();
         sti();
         hlt();
         cli();
@@ -319,8 +318,16 @@ void proc4(void) {
 
 void proc5(void) {
     for (;;) {
-        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
+        printf("je cree un nouveau processus\n");
+        char *name = (char *)"new_process";
+        int32_t proc_pid = cree_processus(proc4, name);
+        if (proc_pid == -1) {
+            printf("ERROR: %s cannot be created", name);
+        }
+        printf("I kill myself\n");
+        kill();
         sti();
         hlt();
         cli();
@@ -329,8 +336,10 @@ void proc5(void) {
 
 void proc6(void) {
     for (;;) {
-        // printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
+        printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
+        printf("I kill myself\n");
+        kill();
         sti();
         hlt();
         cli();
@@ -338,9 +347,11 @@ void proc6(void) {
 }
 
 void proc7(void) {
-    for (;;) {
+    for (size_t i = 0; i < 5; ++i) {
         printf("[%s] pid = %lli\n", get_active_name(), get_active_pid());
         // scheduler();
+        printf("I kill myself\n");
+        kill();
         sti();
         hlt();
         cli();
@@ -348,10 +359,10 @@ void proc7(void) {
 }
 
 int32_t cree_processus_round_robin(void (*proc)(void), char *name) {
-    int32_t my_pid = (int32_t)++pid;
-    if (my_pid == PROCESS_COUNT) {
+    if (pid == PROCESS_COUNT - 1 || name == NULL) {
         return -1;
     }
+    int32_t my_pid = (int32_t)++pid;
 
     /** 
      * La case de la zone de sauvegarde des registres correspondant à %esp (ie. deuxième case)
@@ -363,11 +374,11 @@ int32_t cree_processus_round_robin(void (*proc)(void), char *name) {
     snprintf(process->name, sizeof(process->name), "%s", name);
     process->state = READY_TO_RUN;
     process->awake_in = 0;
-    process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 1];
-    process->stack[STACK_CAPACITY - 1] = (uint32_t)proc;
-
     process->next = NULL;
     process->priority = READY_TO_RUN;
+    process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 2];
+    process->stack[STACK_CAPACITY - 1] = (uint32_t)kill;
+    process->stack[STACK_CAPACITY - 2] = (uint32_t)proc;
 
     return my_pid;
 }
@@ -378,22 +389,16 @@ int32_t cree_processus_priority(void (*proc)(void), char *name) {
     }
     int32_t my_pid = (int32_t)++pid;
 
-    /** 
-     * La case de la zone de sauvegarde des registres correspondant à %esp (ie. deuxième case)
-     * doit pointer sur le sommet de pile, et la case en sommet de pile doit contenir l’adresse 
-     * de la fonction proc1.
-     */
     process_t *process = malloc(sizeof *process);
     process->pid = my_pid;
     snprintf(process->name, sizeof(process->name), "%s", name);
     process->state = READY_TO_RUN;
     process->awake_in = 0;
+    process->next = NULL;
+    process->priority = READY_TO_RUN;
     process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 2];
     process->stack[STACK_CAPACITY - 1] = (uint32_t)kill;
     process->stack[STACK_CAPACITY - 2] = (uint32_t)proc;
-
-    process->next = NULL;
-    process->priority = READY_TO_RUN;
 
     push(pqueue_ready_to_run, process);
 
@@ -459,6 +464,9 @@ void init_processes(void) {
     snprintf(idle->name, sizeof(idle->name), "%s", "idle");
     idle->state = RUNNING;
     idle->awake_in = 0;
+    idle->next = NULL;
+    idle->priority = __INT_MAX__;
+
     // idle est le process actif
     active = idle;
 
@@ -486,7 +494,6 @@ void init_processes(void) {
     if (proc_pid == -1) {
         printf("ERROR: %s cannot be created", name);
     }
-
     name = (char *)"proc3";
     proc_pid = cree_processus(proc3, name);
     if (proc_pid == -1) {

@@ -1,2 +1,0 @@
-div64.c:8:28:hard_bsr	24	static
-div64.c:34:20:do_div64	84	dynamic,bounded

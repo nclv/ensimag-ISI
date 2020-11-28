@@ -1,5 +1,0 @@
-sprintf.c:54:1:savechar	28	static
-sprintf.c:67:5:vsprintf	64	dynamic,bounded
-sprintf.c:79:5:vsnprintf	64	dynamic,bounded
-sprintf.c:91:5:sprintf	48	dynamic,bounded
-sprintf.c:102:5:snprintf	48	dynamic,bounded

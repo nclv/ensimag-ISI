@@ -1,5 +1,0 @@
-cpu.h:96:33:inb	28	static
-debugger.c:9:13:write_hex	44	static
-debugger.c:22:13:dump_registers	44	dynamic,bounded
-debugger.c:71:24:tss_sel_2_tss	28	static
-debugger.c:79:6:trap_handler	4048	dynamic,bounded

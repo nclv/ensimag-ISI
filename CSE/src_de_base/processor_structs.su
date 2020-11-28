@@ -1,8 +1,0 @@
-cpu.h:78:24:outb	16	static
-processor_structs.c:52:13:fill_descriptor	48	static
-processor_structs.c:70:13:fill_gate	64	static
-processor_structs.c:91:13:setup_gdt	64	dynamic,bounded
-processor_structs.c:134:13:setup_idt	80	dynamic,bounded
-processor_structs.c:169:13:setup_tss	32	dynamic,bounded
-processor_structs.c:180:13:setup_pic	16	dynamic,bounded
-processor_structs.c:204:6:cpu_init	16	static
