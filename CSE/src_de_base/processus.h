@@ -2,6 +2,7 @@
 #define __PROCESSUS_H__
 
 #include <inttypes.h>
+#include <stddef.h>
 
 #define MAX_LEN (100)
 /**
@@ -25,6 +26,8 @@ typedef struct process {
     uint32_t awake_in;
     uint32_t registers[NUM_REG];     // zone de sauvegarde des registres du processeur
     uint32_t stack[STACK_CAPACITY];  // pile d’exécution du processus,
+    int priority;
+    struct process *next;
 } process_t;
 
 extern void idle(void);
@@ -35,15 +38,10 @@ extern void scheduler(void);
 extern void ctx_sw(uint32_t *current_process, uint32_t *new_process);
 
 /* pqueue structs */
-typedef struct node {
-    process_t *process;
-    int priority;  // les petites valeurs ont une grande priorité
-    // struct node* previous;
-    struct node* next;
-} node_t;
 
 typedef struct pqueue {
-    node_t *head;
+    process_t *head;
+    size_t len;
 } pqueue_t;
 
 #endif
