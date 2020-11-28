@@ -1,0 +1,4 @@
+cpu.h:46:24:sti	8	static
+cpu.h:51:24:hlt	8	static
+start.c:10:6:kernel_start	32	dynamic,bounded
+start.c:78:5:main	16	static
