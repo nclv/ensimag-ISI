@@ -30,18 +30,16 @@ typedef struct process {
     struct process *next;
 } process_t;
 
+extern void print_process(process_t *process);
+
 extern void idle(void);
 extern void init_processes(void);
 extern void scheduler(void);
+extern int32_t cree_processus(void (*proc)(void), char *name);
+extern int sleep(uint32_t nbr_secs);
+extern void kill(void);
 
 // Assembly function
 extern void ctx_sw(uint32_t *current_process, uint32_t *new_process);
-
-/* pqueue structs */
-
-typedef struct pqueue {
-    process_t *head;
-    size_t len;
-} pqueue_t;
 
 #endif

@@ -5,67 +5,8 @@
 
 #include "cpu.h"
 #include "idt.h"
-#include "malloc.c.h"
-
-void print_process(process_t *process) {
-    printf("Name: %s, State: %d, Priority: %d, Awake in: %d, PID: %lld\n", process->name, process->state, process->priority, process->awake_in, process->pid);
-}
-
-void print_queue(pqueue_t *pqueue) {
-    process_t *process = pqueue->head;
-    printf("Len: %d\n", pqueue->len);
-    while (process != NULL) {
-        print_process(process);
-        process = process->next;
-    }
-}
-
-pqueue_t *create_pqueue(void) {
-    pqueue_t *pqueue = malloc(sizeof *pqueue);
-    // if (pqueue == NULL) exit(EXIT_FAILURE);
-    pqueue->head = NULL;
-    pqueue->len = 0;
-
-    return pqueue;
-}
-
-process_t *peek(pqueue_t *pqueue) {
-    return pqueue->head;
-}
-
-process_t *pop(pqueue_t *pqueue) {
-    process_t *process = pqueue->head;
-    if (pqueue->head != NULL) pqueue->head = pqueue->head->next;
-    if (pqueue->len-- <= 0) pqueue->len = 0;
-    return process;
-}
-
-void push(pqueue_t *pqueue, process_t *process) {
-    process_t *current_node = pqueue->head;
-    process->next = NULL;
-    if (pqueue->len < 0) print_queue(pqueue);
-    if (pqueue->len == 0) {
-        pqueue->head = process;
-    } else if (current_node->priority > process->priority) {
-        // insertion en tête
-        process->next = pqueue->head;
-        pqueue->head = process;
-    } else {
-        while (current_node->next != NULL && current_node->next->priority < process->priority) {
-            current_node = current_node->next;
-        }
-        // end of the list or at good position
-        process->next = current_node->next;
-        current_node->next = process;
-    }
-    pqueue->len++;
-}
-
-int is_empty(pqueue_t *pqueue) {
-    return (pqueue->head == NULL);
-}
-
-/* Processes handling */
+#include "malloc.h"
+#include "pqueue.h"
 
 #define PROCESS_COUNT (8)
 
@@ -79,6 +20,10 @@ pqueue_t *pqueue_dead = NULL;
 
 /* On incrémente le pid à chaque nouveau process */
 static int64_t pid = -1;
+
+void print_process(process_t *process) {
+    printf("Name: %s, State: %d, Priority: %d, Awake in: %d, PID: %lld\n", process->name, process->state, process->priority, process->awake_in, process->pid);
+}
 
 /**
  * @return active process name
@@ -198,6 +143,7 @@ int priority_sleep(uint32_t nbr_secs) {
     
     active->state = SLEEPING;
     active->awake_in = get_uptime() + nbr_secs;
+    active->priority = (int)active->awake_in;
     push(pqueue_sleeping, active);
     priority_scheduler();
     return 0;
@@ -228,6 +174,64 @@ void priority_kill(void) {
 
 void kill(void) {
     priority_kill();
+}
+
+int32_t cree_processus_round_robin(void (*proc)(void), char *name) {
+    if (pid == PROCESS_COUNT - 1 || name == NULL) {
+        return -1;
+    }
+    int32_t my_pid = (int32_t)++pid;
+
+    process_t *process = &processes_table[my_pid];
+    process->pid = my_pid;
+    snprintf(process->name, sizeof(process->name), "%s", name);
+    process->state = READY_TO_RUN;
+    process->awake_in = 0;
+    process->next = NULL;
+    process->priority = READY_TO_RUN;
+    process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 2];
+    process->stack[STACK_CAPACITY - 1] = (uint32_t)kill;
+    process->stack[STACK_CAPACITY - 2] = (uint32_t)proc;
+
+    return my_pid;
+}
+
+int32_t cree_processus_priority(void (*proc)(void), char *name) {
+    if (pid == PROCESS_COUNT - 1 || name == NULL) {
+        return -1;
+    }
+    int32_t my_pid = (int32_t)++pid;
+
+    process_t *process = malloc(sizeof *process);
+    process->pid = my_pid;
+    snprintf(process->name, sizeof(process->name), "%s", name);
+    process->state = READY_TO_RUN;
+    process->awake_in = 0;
+    process->next = NULL;
+    process->priority = READY_TO_RUN;
+    process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 2];
+    process->stack[STACK_CAPACITY - 1] = (uint32_t)kill;
+    process->stack[STACK_CAPACITY - 2] = (uint32_t)proc;
+
+    push(pqueue_ready_to_run, process);
+
+    return my_pid;
+}
+
+/**
+ * Création d'un processus.
+ *   
+ * La case de la zone de sauvegarde des registres correspondant à %esp (ie. deuxième case)
+ * doit pointer sur le sommet de pile, et la case en sommet de pile doit contenir l’adresse 
+ * de la fonction proc1. L'avant dernière case contient la fonction de terminaison des processus.
+ *
+ * @param proc fonction du processus
+ * @param name nom du processus créer
+ * 
+ * @return created processus pid, else -1
+ */
+int32_t cree_processus(void (*proc)(void), char *name) {
+    return cree_processus_priority(proc, name);
 }
 
 void idle(void) {
@@ -358,65 +362,6 @@ void proc7(void) {
     }
 }
 
-int32_t cree_processus_round_robin(void (*proc)(void), char *name) {
-    if (pid == PROCESS_COUNT - 1 || name == NULL) {
-        return -1;
-    }
-    int32_t my_pid = (int32_t)++pid;
-
-    /** 
-     * La case de la zone de sauvegarde des registres correspondant à %esp (ie. deuxième case)
-     * doit pointer sur le sommet de pile, et la case en sommet de pile doit contenir l’adresse 
-     * de la fonction proc1.
-     */
-    process_t *process = &processes_table[my_pid];
-    process->pid = my_pid;
-    snprintf(process->name, sizeof(process->name), "%s", name);
-    process->state = READY_TO_RUN;
-    process->awake_in = 0;
-    process->next = NULL;
-    process->priority = READY_TO_RUN;
-    process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 2];
-    process->stack[STACK_CAPACITY - 1] = (uint32_t)kill;
-    process->stack[STACK_CAPACITY - 2] = (uint32_t)proc;
-
-    return my_pid;
-}
-
-int32_t cree_processus_priority(void (*proc)(void), char *name) {
-    if (pid == PROCESS_COUNT - 1 || name == NULL) {
-        return -1;
-    }
-    int32_t my_pid = (int32_t)++pid;
-
-    process_t *process = malloc(sizeof *process);
-    process->pid = my_pid;
-    snprintf(process->name, sizeof(process->name), "%s", name);
-    process->state = READY_TO_RUN;
-    process->awake_in = 0;
-    process->next = NULL;
-    process->priority = READY_TO_RUN;
-    process->registers[1] = (uint32_t)&process->stack[STACK_CAPACITY - 2];
-    process->stack[STACK_CAPACITY - 1] = (uint32_t)kill;
-    process->stack[STACK_CAPACITY - 2] = (uint32_t)proc;
-
-    push(pqueue_ready_to_run, process);
-
-    return my_pid;
-}
-
-/**
- * Création d'un processus.
- * 
- * @param proc fonction du processus
- * @param name nom du processus créer
- * 
- * @return created processus pid, else -1
- */
-int32_t cree_processus(void (*proc)(void), char *name) {
-    return cree_processus_priority(proc, name);
-}
-
 char proc_str[PROCESS_COUNT - 1][6] = {
     "proc1",
     "proc2",
@@ -472,52 +417,12 @@ void init_processes(void) {
 
     /* Création des processus */
 
-    // problème avec l'argument *proc_fn[i]
-    // int32_t proc_pid;
-    // for (int i = 0; i < PROCESS_COUNT - 1; i++) {
-    //     proc_pid = cree_processus(*proc_fn[i], (char *)proc_str[i]);
-    //     print_process(&processes_table[proc_pid]);
-    //     if (proc_pid == -1) {
-    //         printf("ERROR: %s cannot be created", proc_str[i]);
-    //     }
-    // }
-
-    char *name = (char *)"proc1";
     int32_t proc_pid;
-    proc_pid = cree_processus(proc1, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-
-    name = (char *)"proc2";
-    proc_pid = cree_processus(proc2, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc3";
-    proc_pid = cree_processus(proc3, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc4";
-    proc_pid = cree_processus(proc4, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc5";
-    proc_pid = cree_processus(proc5, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc6";
-    proc_pid = cree_processus(proc6, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
-    }
-    name = (char *)"proc7";
-    proc_pid = cree_processus(proc7, name);
-    if (proc_pid == -1) {
-        printf("ERROR: %s cannot be created", name);
+    for (int i = 0; i < PROCESS_COUNT - 1; i++) {
+        proc_pid = cree_processus(*proc_fn[i], (char *)proc_str[i]);
+        if (proc_pid == -1) {
+            printf("ERROR: %s cannot be created", proc_str[i]);
+        }
     }
 
     print_queue(pqueue_ready_to_run);
