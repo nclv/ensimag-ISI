@@ -130,6 +130,7 @@ int round_robin_sleep(uint32_t nbr_secs) {
     process_t *current_process = &processes_table[current_pid];
     current_process->state = SLEEPING;
     current_process->awake_in = get_uptime() + nbr_secs;
+    current_process->priority = (int)current_process->awake_in;
     round_robin_scheduler();
     return 0;
 }
