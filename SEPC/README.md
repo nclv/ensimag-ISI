@@ -1,4 +1,4 @@
-See [ensimag-malloc](https://gitlab.ensimag.fr/vincentn/ensimag-malloc)
+See [ensimag-malloc](https://gitlab.ensimag.fr/vincentn/ensimag-malloc) and the [buddy system](https://broquedf.pages.ensimag.fr/sepcovid/allocateur/#lalgorithme-du-compagnon-buddy-system)
 
 ---
 
