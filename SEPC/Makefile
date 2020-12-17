@@ -16,6 +16,7 @@ all: $(TARGET)
 
 $(TARGET): $(BIN_DIR)/%: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	rm -rf *.su
 
 # $(TARGET): $(OBJ)
 # 	$(info )

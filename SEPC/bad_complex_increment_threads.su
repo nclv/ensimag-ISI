@@ -1,3 +1,0 @@
-src/bad_complex_increment_threads.c:15:5:add_to	16	static
-src/bad_complex_increment_threads.c:24:5:print	16	static
-src/bad_complex_increment_threads.c:32:5:main	80	static

@@ -1,3 +1,0 @@
-src/allocateur.c:14:5:allouer	32	static
-src/allocateur.c:33:5:liberer	16	static
-src/allocateur.c:44:5:main	48	static

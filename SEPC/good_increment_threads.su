@@ -1,3 +1,0 @@
-src/good_increment_threads.c:13:5:loop	32	static
-src/good_increment_threads.c:7:6:incremente	16	static
-src/good_increment_threads.c:21:5:main	32	static
