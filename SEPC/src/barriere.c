@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <threads.h>
 #include <unistd.h>
 
@@ -60,7 +61,7 @@ int barriere(void) {
     }
 
     mtx_unlock(&m);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int thread_routine(void* args) {
@@ -77,7 +78,7 @@ int thread_routine(void* args) {
     ret = barriere();
     printf(" Thread-%d Resume. barrier_wait return:%d\n", thread_num, ret);
     printf("-- Thread %d End -- \n", thread_num);
-    thrd_exit(0);
+    return EXIT_SUCCESS;
 }
 
 int main(void) {
@@ -91,5 +92,5 @@ int main(void) {
     for (int i = 0; i < N + 1; ++i)
         thrd_join(threads[i], 0);
 
-    return 0;
+    return EXIT_SUCCESS;
 }

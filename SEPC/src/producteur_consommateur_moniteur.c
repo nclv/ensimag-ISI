@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <threads.h>
 
 /*
@@ -49,7 +50,7 @@ int deposer(void* args) {
 
     cnd_signal(&file_conso);
     mtx_unlock(&m);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int retirer(void* args) {
@@ -74,7 +75,7 @@ int retirer(void* args) {
 
     cnd_signal(&file_prod);
     mtx_unlock(&m);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 
@@ -95,5 +96,5 @@ int main(void) {
     for (int i = 0; i < N / 2; ++i)
         thrd_join(th_retirer[i], 0);
     
-    return 0;
+    return EXIT_SUCCESS;
 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <threads.h>
 
 /*
@@ -68,7 +69,7 @@ int philo(void* args) {
         poser_fourchettes(mon_numero);
         ++k;
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int main(void) {

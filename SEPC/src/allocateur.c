@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <threads.h>
 
 uint32_t nb_ressources = 10;
@@ -27,7 +28,7 @@ int allouer(void *args) {
     // ajouter un signal juste avant le unlock (réveil en cascade) ne fonctionne pas
     // s'il n'y avait pas assez de ressources pour le premier thread réveillé, il va se rendormir tout de suite et réveiller personne, même s'il y a assez de ressources pour un des threads à sa suite.
     mtx_unlock(&mutex);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int liberer(void *args) {
@@ -38,7 +39,7 @@ int liberer(void *args) {
     // si aucune ressource et 1000 threads ils vont tous s'endormir, si un thread arrive et libère 1000 ressources un seul thread est réveillé alors qu'il reste 999 ressources (et 999 threads endormis)
     cnd_broadcast(&condition); // réveille tous les threads
     mtx_unlock(&mutex);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int main(void) {
@@ -49,4 +50,5 @@ int main(void) {
     thrd_join(th1, 0);
     thrd_join(th2, 0);
     printf("%u \n", nb_ressources);
+    return EXIT_SUCCESS;
 }

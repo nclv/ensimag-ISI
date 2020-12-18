@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <threads.h>
 
 uint32_t variable = 0;
@@ -24,7 +25,7 @@ int add_to(void* args) {
         cnd_signal(&c); // réveiller le thread d'affichage
 
     mtx_unlock(&m);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 // affiche la valeur de la variable
@@ -38,7 +39,7 @@ int print(void* args) {
 
     printf("%u\n", *var);
     mtx_unlock(&m);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int main(void) {
@@ -57,4 +58,5 @@ int main(void) {
     thrd_join(th_print, NULL); // afficher peut s'exécuter avant l'incrémentation
 
     // ce programme n'affiche pas toujours 20, une solution est de déplacer le create de la fonction print après la boucle join
+    return EXIT_SUCCESS;
 }

@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <threads.h>
 /*
  Deux types de threads veulent accéder à une ressource partagée, par exemple une base de données ou un fichier. Les lecteurs veulent accéder à la ressource pour la consulter alors que les rédacteurs veulent la modifier.
@@ -94,7 +95,7 @@ int lecteur(void* args) {
     printf("Lecture: %u\n", rsrc.value);
 
     fin_lire();
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 /*
@@ -115,7 +116,7 @@ int redacteur(void* args) {
     printf("Ecriture: %u\n", rsrc.value);
 
     fin_redac();
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int main(void) {
@@ -136,5 +137,5 @@ int main(void) {
     for (int i = 0; i < N / 2; ++i)
         thrd_join(th_lecteur[i], 0);
 
-    return 0;
+    return EXIT_SUCCESS;
 }

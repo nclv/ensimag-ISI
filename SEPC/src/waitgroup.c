@@ -82,7 +82,7 @@ int thread_routine(void* args) {
     printf(" Thread-%d Resume.\n", thread_num);
     printf("-- Thread %d End -- \n", thread_num);
     done(g);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int main(void) {
@@ -104,5 +104,5 @@ int main(void) {
 
     if (g != NULL) free(g);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
