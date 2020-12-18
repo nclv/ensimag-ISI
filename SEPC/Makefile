@@ -6,7 +6,7 @@ OBJ_DIR := obj
 BIN_DIR := bin
 
 CFLAGS := -Wall -Wextra -g3 -O3 -Werror -Wshadow -Wconversion -Wdouble-promotion -Wformat=2 -Wformat-truncation=2 -Wundef -fno-common -fstack-usage -Wfloat-equal -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=2 -Wwrite-strings -Waggregate-return -ffunction-sections -fdata-sections
-LDFLAGS := -Wl,--gc-sections -Wl,--print-gc-sections -pthread
+LDFLAGS := -Wl,--gc-sections -Wl,--print-gc-sections -pthread -fopenmp
 
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))

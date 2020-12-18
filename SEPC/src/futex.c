@@ -88,7 +88,6 @@ Passe une variable qui vaut 0 à 1 de manière atomique.
 Elle renvoie true si elle a réussi le changement, et false sinon.
 */
 bool atomic_test_and_set(atomic_int* variable) {
-    int oldval = *variable;
     return atomic_compare_and_exchange_strong(variable, (int*)1, 0);
 }
 
