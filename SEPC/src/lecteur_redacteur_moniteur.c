@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
+
 /*
- Deux types de threads veulent accéder à une ressource partagée, par exemple une base de données ou un fichier. Les lecteurs veulent accéder à la ressource pour la consulter alors que les rédacteurs veulent la modifier.
+Deux types de threads veulent accéder à une ressource partagée, par exemple une base de données ou un fichier. Les lecteurs veulent accéder à la ressource pour la consulter alors que les rédacteurs veulent la modifier.
 
 Les threads doivent respecter les règles suivantes :
 
