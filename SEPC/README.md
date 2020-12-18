@@ -1,6 +1,6 @@
 See [ensimag-malloc](https://gitlab.ensimag.fr/vincentn/ensimag-malloc) and the [buddy system](https://broquedf.pages.ensimag.fr/sepcovid/allocateur/#lalgorithme-du-compagnon-buddy-system)
 
-Dans le code du dossier _src/_, aucune gestion des erreurs n'est effectué sur les méthodes de création des threads, mutex et sémaphores.
+Dans le code du dossier _src/_, aucune gestion des erreurs n'est effectué sur les méthodes de création des threads, mutex et sémaphores. Le crédit de la logique des implémentations (mutex, semaphores, ...) va à Grégory Mounié.
 
 ---
 
