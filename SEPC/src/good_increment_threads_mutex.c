@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <threads.h> // C11, need to link -pthread
 
-int compteur = 0;
+static int compteur = 0;
 mtx_t mutex;
 
 void incremente(void) {
