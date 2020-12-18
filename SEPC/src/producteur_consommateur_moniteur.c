@@ -78,7 +78,6 @@ int retirer(void* args) {
     return EXIT_SUCCESS;
 }
 
-
 int main(void) {
     message_t messages[N] = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}};
     thrd_t th_deposer[N], th_retirer[N / 2];
@@ -95,6 +94,6 @@ int main(void) {
 
     for (int i = 0; i < N / 2; ++i)
         thrd_join(th_retirer[i], 0);
-    
+
     return EXIT_SUCCESS;
 }

@@ -83,5 +83,5 @@ int main(void) {
     for (int i = 0; i < N; ++i)
         thrd_join(th_philosophe[i], 0);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
