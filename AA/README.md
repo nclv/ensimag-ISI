@@ -1,0 +1,1 @@
+[Rust function signatures](https://hoverbear.org/blog/reading-rust-function-signatures/)

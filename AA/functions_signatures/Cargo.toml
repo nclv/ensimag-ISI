@@ -1,5 +1,5 @@
 [package]
-name = "foobar"
+name = "functions_signatures"
 version = "0.1.0"
 authors = ["Nicolas Vincent <nicolas.vincent@grenoble-inp.org>"]
 edition = "2018"
