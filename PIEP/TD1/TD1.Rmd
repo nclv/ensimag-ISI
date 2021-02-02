@@ -1,0 +1,109 @@
+---
+title: "TD1"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+
+# Algorithme du milieu du carré de von Neumann
+
+```{r}
+# Génération d'un nombre aléatoire en suivant l'algorithme de Von Neumann
+# Apparition de nombres à 3 digits, par exemple 4902 -> 0296
+pseudorandom.vonNeumann.generator <- function(n) {
+  isInt <- all.equal(n, as.integer(n)) 
+  if (!isTRUE(isInt)) {
+    stop("L'argument n'est pas entier.")
+  }
+  
+  carre <- n ** 2
+  # print(carre)
+  result <- (carre %/% 100) %% 10000
+  # print(result)
+  return(result)
+}
+
+# Génération d'une liste de nombre pseudo aléatoire
+pseudorandom.vonNeumann.generate <- function(n, start) {
+  suite <- rep(0, times = n)
+  suite[1] <- start
+  for (index in 1:n) {
+    suite[index + 1] <- pseudorandom.vonNeumann.generator(suite[index])
+  }
+  return(suite / 10000)
+}
+
+pseudorandom.vonNeumann.generate(20, 8653)
+
+```
+Si le nombre passé en argument du générateur contient 4 zéros au milieu le générateur ne renvoie que des zéros. D'autres valeurs génèrent une suite de nombre identiques.
+
+```{r}
+pseudorandom.vonNeumann.generate(10, 0000)
+pseudorandom.vonNeumann.generate(10, 0100)
+pseudorandom.vonNeumann.generate(10, 2500)
+pseudorandom.vonNeumann.generate(10, 3792)
+pseudorandom.vonNeumann.generate(10, 7600)
+```
+On peut observer des cycles courts
+
+```{r}
+pseudorandom.vonNeumann.generate(10, 0540) # cycle de longueur 4
+pseudorandom.vonNeumann.generate(47, 8653) # cycle de longueur 4
+```
+Si la première moitié d'un nombre contient des zéros, la suite va converger vers 0.
+
+```{r}
+pseudorandom.vonNeumann.generate(10, 0023)
+```
+8653 est une valeur de départ qui n'est pas mauvaise pour la génération d'une suite de moins de 40 nombres. Il faut éviter les nombres contenant des zéros.
+
+# Algorithme congruentiel linéaire
+
+```{r}
+lcg.rand <- function(m, a, c, x, n) {
+  res <- rep(0, length = n)
+  for (i in 1:n) {
+    x <- (a * x + c) %% m
+    res[i] <- x / m
+  }
+  return(res)
+}
+
+for (n in c(512, 1024, 2048)) {
+  for (a in c(65, 1365, 1229, 157)) {
+    values <- lcg.rand(2048, a, 1, 0, n)
+    plot(values[1:(n - 1)], values[2:n], main = paste('n = ', n, ' a = ', a, ' c = ', 1))
+  }
+  
+  for (a in c(45, 43)) {
+    values <- lcg.rand(2048, a, 0, 1, n)
+    plot(values[1:(n - 1)], values[2:n], main = paste('n = ', n, ' a = ', a, ' c = ', 0))
+  }
+}
+```
+
+Les valeurs sont très corrélées. La génération n'est pas aléatoire.
+
+L'incrément $c$ est utilisé pour obtenir une période maximale (égale à $m$). Pour $c = 1$ on a $pgcd(c, m) = 1$. Il reste à vérifier les conditions sur $a$ et $m$ pour obtenir une période maximale. Si $c$ est nul il n'y a pas de condition sur $c$. Le générateur n'est pas sensible au choix de $c$ du moment qu'il est premier avec $m$, donc impair si $m$ est une puissance de $2$.
+
+```{r}
+library(plot3D)
+
+for (n in c(512, 1024, 2048)) {
+  values <- lcg.rand(2048, 65, 1, 0, n)
+  scatter3D(values[1:(n - 2)], values[2:(n - 1)], values[3:n], colvar = NULL, main = paste('n = ', n))
+  
+  values <- lcg.rand(2048, 45, 0, 1, n)
+  scatter3D(values[1:(n - 2)], values[2:(n - 1)], values[3:n], colvar = NULL, main = paste('n = ', n))
+}
+```
+
+Une valeur de $c$ égale à $1$ permet une meilleur répartition dans notre exemple ($m = 2048$). Mais ce n'est pas suffisant, il faudrait modifier la valeur de $a$ pour obtenir une bonne distribution.
+
+```{r}
+# Distribution aléatoire, on initialise avec un x_0 random et une valeur de a élevée 
+# (implémentation ANSI C).
+plot(lcg.rand(2 ** 32, 1103515245, 1, as.numeric(Sys.time()) * 1000, 2048)) 
+```
