@@ -1,0 +1,1 @@
+select sys_context('USERENV','SERVICE_NAME') from dual;
