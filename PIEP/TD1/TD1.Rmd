@@ -107,3 +107,7 @@ Une valeur de $c$ égale à $1$ permet une meilleur répartition dans notre exem
 # (implémentation ANSI C).
 plot(lcg.rand(2 ** 32, 1103515245, 1, as.numeric(Sys.time()) * 1000, 2048)) 
 ```
+
+# Gap Test
+
+Si la  suite  (ui)  est  indépendante  de  loi  uniforme  sur $]0,1[$ alors 
