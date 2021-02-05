@@ -50,7 +50,9 @@ On peut observer des cycles courts
 
 ```{r}
 pseudorandom.vonNeumann.generate(10, 0540) # cycle de longueur 4
-pseudorandom.vonNeumann.generate(47, 8653) # cycle de longueur 4
+pseudorandom.vonNeumann.generate(47, 8653) # cycle de longueur 4 à partir de la 46ème valeur
+pseudorandom.vonNeumann.generate(60, 5497) # cycle de longueur 4 à partir de la 54ème valeur
+pseudorandom.vonNeumann.generate(116, 6239) # cycle de longueur 4 à partir de la 111ème valeur
 ```
 Si la première moitié d'un nombre contient des zéros, la suite va converger vers 0.
 
@@ -121,3 +123,17 @@ gap.test(runif(100000))
 En comparant au résultat de `runif`, on voit bien que l'algorithme de Neumann ne fournit pas une distribution aléatoire.
 
 # Run Test
+
+```{r}
+library(snpar)
+runs.test(pseudorandom.vonNeumann.generate(1000000, 8653), alternative = ("two.sided"))
+runs.test(runif(1000000), alternative = ("two.sided"))
+```
+La *p-value* de $1$ pour le générateur de von Neumann est 
+
+# Test d'Uniformicité
+
+```{r}
+ks.test(pseudorandom.vonNeumann.generate(43, 8653), "punif", -1, 1)
+```
+Si l’hypothèse nulle est vraie (génération de vonNeumann uniforme), alors la probabilité de voir la statistique de test ($D = 0.6$) autant éloignée de la valeur $0$ est inférieure à $2e-11$, soit une faible probabilité. Autrement dit, la valeur de $D$ est trop grande et donc on ne peut pas accepter l’hypothèse nulle. Ceci confirme donc que la loi de probabilité de n’est pas celle d’une loi uniforme.
