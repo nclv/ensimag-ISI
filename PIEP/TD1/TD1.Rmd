@@ -126,14 +126,15 @@ En comparant au résultat de `runif`, on voit bien que l'algorithme de Neumann n
 
 ```{r}
 library(snpar)
-runs.test(pseudorandom.vonNeumann.generate(1000000, 8653), alternative = ("two.sided"))
-runs.test(runif(1000000), alternative = ("two.sided"))
+ # ce n'est pas le test du polycopié, nous n'avons pas eu le temps de le coder
+runs.test(pseudorandom.vonNeumann.generate(111, 6239), alternative = ("two.sided"))
+runs.test(runif(111), alternative = ("two.sided"))
 ```
-La *p-value* de $1$ pour le générateur de von Neumann est 
+
 
 # Test d'Uniformicité
 
 ```{r}
-ks.test(pseudorandom.vonNeumann.generate(43, 8653), "punif", -1, 1)
+ks.test(pseudorandom.vonNeumann.generate(110, 6239), "punif", -1, 1)
 ```
-Si l’hypothèse nulle est vraie (génération de vonNeumann uniforme), alors la probabilité de voir la statistique de test ($D = 0.6$) autant éloignée de la valeur $0$ est inférieure à $2e-11$, soit une faible probabilité. Autrement dit, la valeur de $D$ est trop grande et donc on ne peut pas accepter l’hypothèse nulle. Ceci confirme donc que la loi de probabilité de n’est pas celle d’une loi uniforme.
+Si l’hypothèse nulle est vraie (génération de *von Neumann* uniforme), alors la probabilité de voir la statistique de test ($D = 0.6$) autant éloignée de la valeur $0$ est inférieure à $2e-16$, soit une faible probabilité. Autrement dit, la valeur de $D$ est trop grande et donc on ne peut pas accepter l’hypothèse nulle. Ceci confirme donc que la loi de probabilité de n’est pas celle d’une loi uniforme.
