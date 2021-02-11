@@ -1,0 +1,22 @@
+<svg width='800' height='600'>
+<rect x='0' y='0' width='96' height='150' fill='red'/>
+<rect x='0' y='150' width='130' height='150' fill='green'/>
+<rect x='0' y='300' width='72' height='150' fill='blue'/>
+<rect x='0' y='450' width='120' height='150' fill='purple'/>
+<rect x='72' y='300' width='50' height='150' fill='yellow'/>
+<rect x='96' y='0' width='145' height='150' fill='red'/>
+<rect x='120' y='450' width='108' height='150' fill='green'/>
+<rect x='122' y='300' width='55' height='150' fill='blue'/>
+<rect x='130' y='150' width='62' height='150' fill='purple'/>
+<rect x='177' y='300' width='93' height='150' fill='yellow'/>
+<rect x='192' y='150' width='141' height='150' fill='red'/>
+<rect x='228' y='450' width='75' height='150' fill='green'/>
+<rect x='241' y='0' width='139' height='150' fill='blue'/>
+<rect x='270' y='300' width='143' height='150' fill='purple'/>
+<rect x='303' y='450' width='128' height='150' fill='yellow'/>
+<rect x='333' y='150' width='104' height='150' fill='red'/>
+<rect x='380' y='0' width='143' height='150' fill='green'/>
+<rect x='413' y='300' width='116' height='150' fill='blue'/>
+<rect x='431' y='450' width='120' height='150' fill='purple'/>
+<rect x='437' y='150' width='56' height='150' fill='yellow'/>
+</svg>

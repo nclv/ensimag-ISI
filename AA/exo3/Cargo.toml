@@ -1,0 +1,7 @@
+[package]
+name = "exo3"
+version = "0.1.0"
+authors = ["frederic wagner <frederic.wagner@imag.fr>"]
+edition = "2018"
+
+[dependencies]
