@@ -1,0 +1,9 @@
+[package]
+name = "echauffement"
+version = "0.1.0"
+authors = ["frederic wagner <frederic.wagner@imag.fr>"]
+edition = "2018"
+
+[dependencies]
+rayon = "0.9.0"
+time = "*"

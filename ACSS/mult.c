@@ -18,3 +18,10 @@ int mult(int x, int y) {
     }
     return z;
 }
+
+int main(void) {
+  int x = 5;
+  int y = 3;
+  int z = mult(x, y);
+  return z;
+}

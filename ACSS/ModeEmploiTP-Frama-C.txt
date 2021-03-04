@@ -1,0 +1,114 @@
+1) Télécharger les fichiers du TP:
+
+   sources.tar
+
+Vérifier la  version  que vous utilisée de frama-c avec la commande
+ 
+  frama-c -version
+  
+
+2) Prendre en main l'archive fournie:
+
+l'archive  contient:
+- un ensemble de fichiers *.c
+- un Makefile
+
+Pour chaque fichier -- excepté "any.c", qui est un fichier auxiliaire
+définissant une fonction retournant un entier lu sur l'entrée standard
+-- vous devez prouver avec Frama-C que le programme n'a pas de RTE et
+que toutes les assertions sont valides (quelques indications sont
+données dans les commentaires commençant par "// TODO"). En
+particulier, vous aurez à trouver les invariants de boucles
+nécessaires pour faire ces preuves.
+
+Avant d'analyser vos fichiers avec Frama-C, compilez les avec l'option
+"-Wall" de "gcc", afin de vérifier leur correction syntaxique (lancez
+juste "make all"). Vous pouvez exécutez chacun de ces programmes et
+observer la valeur de retour de leur fonction "main", en vous
+inspirant de la ligne de commande donnée ici pour le programme "mult"
+  ./mult; echo $?
+
+Alors, pour lancer la vérification du programme "mult.c" en Frama-C,
+lancer la commande suivante. Ici, l'option "-wp-split" indique de casser
+les obligations de preuve autant que possible, ce qui aide à
+identifier où le prouveur échoue éventuellement:
+
+  frama-c-gui -wp -wp-rte -wp-split mult.c &
+
+Vous pouvez éventuellement commencer par faire la vérification sans
+les conditions RTE (sans l'option "-wp-rte") et l'insérer
+ultérieurement.
+
+
+3) Utiliser Frama-C
+
+L'interface de Frama-C ne permet pas d'éditer les fichiers. Afin de modifier un fichier:
+
+- modifier et sauver le fichier dans votre éditeur favori;
+
+- afin de réessayer la preuve d'une seule annotation: d'abord, charger votre modification avec le menu ``File/Reparse'';
+ ensuite, lancer le prouveur par un clic-droit  sur la ligne de l'annotation;
+
+- afin de réessayer la preuve de toutes les annotations, c'est plus rapide d'utiliser Frama-C en mode console:
+
+   frama-c -wp -wp-rte -wp-split myfile.c
+
+Ne relancer l'interface graphique que pour voir les obligations de preuve non prouvées:
+
+   frama-c-gui -wp -wp-rte -wp-split myfile.c &
+
+
+4) Comprendre les couleurs des "boulettes" sur les annotations:
+- blue: waiting for the proof
+- green: proved
+- orange: the proof attempt has failed
+- green/orange: proved by assuming an other orange goal
+
+
+5) Voir les buts donnés au SMT-Solveur
+
+- cliquer sur le menu "WP Goals"
+
+- cliquer sur un but:
+  * surligne en bleu l'assertion ACSL correspondant à ce but
+  * surligne en jaune la sequence d'instructions impliquées dans ce but
+  * surligne en rose les assertions ACSL utilisées (dépendances)
+
+- réciproquement, cliquer sur une assertion ACSL fait apparaître la
+  liste des buts associés à cette assertion (il y en a plusieurs à
+  cause du -wp-split)
+  
+- double-cliquer sur un but affiche celui-ci (un onglet permet de
+  choisir différents mode d'affichage)
+  
+- on quitte cette fenêtre d'affichage en cliquant sur le bouton
+  "list of goals" (un bouton avec un doigt au-dessus d'un texte).
+
+
+6) Ordre des exercices
+
+Exercice 1  :
+
+- mult.c: un premier exemple pour prendre un main et comprendre l'outil
+  - lancer frama-c-gui mult.c
+ - activer le pluging rtegen : ajoute les assertions en lien avec les erreurs
+   à l'exécution 
+ - activer le pluging WP qui fait les preuves 
+
+- mult.c: enlever l'invariant 0 <= x. Que se passe t'il ? Pourquoi ?
+
+Exercice 2 :
+
+- arith1.c: trouver un invariant 
+
+- div0.c: invariants + precondition + postcondition + function calls.
+
+- linear_search.c: linear search in an array.
+
+Exercice 3 : un au choix
+
+- div1.c: close to "div0.c" but with an introduction to pointers and aliases. 
+
+- min_sort.c: selection sort with a bit of pointer manipulation on array cells (swap)
+
+- copy de tableau : comprendre disjoint_array_copy.c et prouver array_copy.c (copie de tableau avec rcouvrement possible)
