@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html> 
+    <head> 
+        <meta charset="UTF-8" /> 	
+        <link rel="stylesheet" type="text/css" href="styles.css" />	
+        <title> 
+            Bibliothèque
+        </title> 			
+    </head> 
+    <body> 
+        <form method="POST" action="first" accept-charset="UTF-8">
+            <!-- Formulaire ajouté pour la manip 4 -->
+            Écrivez un texte : <input type="text" name="letexte" />
+            <input type="submit" />
+        </form>
+
+        <h1>Bibliothèque Municipale</h1>
+
+        <ul>
+            <li>Accès au <a href="#catalogue">catalogue</a></li>		
+            <li>Accès aux <a href="#horaires">horaires</a></li>
+            <li><a href="register.html">S’enregistrer</a></li>
+            <li><a href="statistics.jsp">Statistiques</a></li>
+        </ul>
+
+        <h2 id="catalogue">Catalogue</h2>			
+
+        Le catalogue de la bibliothèque comporte 3 ouvrages
+        actuellement :
+        <ul>
+            <li><span class="titre">Les Travailleurs de la Mer</span>, Victor Hugo</li>
+            <li><span class="titre">CSS 2 - Pratique du design web</span>, Raphaël Goetter</li>
+            <li><span class="titre">The C++ Programming Language</span>, Bjarne Stroustrup</li>
+        </ul>
+
+        <h2 id="horaires">Horaires d’ouverture</h2>
+        <table>
+            <tr><th>Jour</th><th>Heures</th></tr>
+            <tr>
+                <td>Lundi</td> 
+                <td>
+                    10h-12h<br/>
+                    14h-18h
+                </td>
+            </tr>
+            <tr>
+                <td>Mercredi</td>	
+                <td>10h-16h</td>
+            </tr>
+            <tr>
+                <td>Samedi</td>
+                <td>8h-12h</td>
+            </tr>
+        </table>
+        <p>Retour en haut de page <a href="#">ici</a>.</p>
+
+    </body>
+</html>

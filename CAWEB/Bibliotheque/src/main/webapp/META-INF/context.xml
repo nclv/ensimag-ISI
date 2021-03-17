@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/Bibliotheque">
+   <Resource
+   auth="Container"
+   type="javax.sql.DataSource"
+   driverClassName="oracle.jdbc.OracleDriver"
+   url="jdbc:oracle:thin:@oracle1.ensimag.fr:1521:oracle1"
+   maxTotal="2"
+   maxIdle="1"
+   maxWaitMillis="20000"
+   name="jdbc/bibliotheque"
+   password=""
+   username=""
+   />
+</Context>

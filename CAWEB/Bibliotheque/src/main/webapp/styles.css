@@ -1,0 +1,50 @@
+html{
+    background-color: grey;
+}
+
+table {
+    margin: auto; /* centre les tableaux */
+}
+
+td {
+    padding: 0.5em; /* espace les cases de tableaux */
+    /* l’unité "em" représente la taille de la police */
+}
+
+body{
+    max-width: 50em; /* rétrécit si on rétrécit la fenêtre mais 
+                        ne grandit pas au-delà de 50em si on l’agrandit */
+    margin: 1vh auto; /* 1 vh en vertical et centré en horizontal */
+    /* l’unité "vh" représente 1/100 de la hauteur de la fenêtre.
+       Il existe aussi l’unité "vw" représentant 1/100 de la largeur. */
+    padding: 20px;
+    /* l’unité "px" représente un pixel et est donc indépendante de la taille
+       de police et de la taille de la fenêtre */
+    background-color: white;
+    font-family: sans-serif;
+}
+
+a {
+    color: darkred;
+    font-weight: bold;
+}
+
+h2 {
+    text-align: center;
+}
+
+span.titre {
+    font-style: italic;
+}
+
+form {
+    padding: 2em;
+    padding-bottom: 1em;
+    max-width: 30em; 
+    background: #88aabb;
+    margin: 0 auto;	
+}
+
+label {
+    font-weight: bold;
+}

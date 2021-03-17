@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+   <meta charset="UTF-8" /> 	
+   <link rel="stylesheet" type="text/css" href="styles.css" />
+   <title>Création d’un compte à la bibliothèque</title>	    
+ </head>
+  <body>
+    <h1>Création d’un nouveau compte</h1>
+<form method="post" action="add_customer" accept-charset="UTF-8">
+  Nom : <input type="text" name="nom" /><br/>
+  Prénom : <input type="text" name="prenom" /><br/>
+  Sexe : <label>
+           <input name="sexe" value="masculin" type="radio" />
+         M</label>
+         <label>
+           <input name="sexe" value="féminin" type="radio" />
+         F</label>
+
+  <p>
+  Ville de résidence : <select name="ville">
+    <option value="GRE">Grenoble</option>
+    <option value="SMH">Saint-Martin d’Hères</option>
+    <option value="GIE">Gières</option>
+    <option value="OTH">Autre ville</option>
+  </select>
+  </p>
+
+  <hr/>
+  Login : <input type="text" name="login" /><br/>
+  Mot de passe : <input type="password" name="mdp" />
+
+  <p>Inscription à la :
+    <label>bibliothèque
+      <input name="inscription" type="checkbox" value="bibli" checked />
+    </label>
+    <label>discothèque
+      <input name="inscription" type="checkbox" value="disco" />
+    </label>
+  </p>
+  <input type="submit" value="Créer"/>
+</form>
+</body>
+</html>
