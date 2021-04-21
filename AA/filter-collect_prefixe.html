@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cours 5 : algorithmes avancés</title>
+  <style>
+    html {
+      line-height: 1.7;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 40em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin-top: 1.7em;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.7em;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1.7em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1.7em 0 1.7em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      font-style: italic;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      background-color: #f0f0f0;
+      font-size: 85%;
+      margin: 0;
+      padding: .2em .4em;
+    }
+    pre {
+      line-height: 1.5em;
+      padding: 1em;
+      background-color: #f0f0f0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin-top: 1.7em;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+    }
+    th, td {
+      border-bottom: 1px solid lightgray;
+      padding: 1em 3em 1em 0;
+    }
+    header {
+      margin-bottom: 6em;
+      text-align: center;
+    }
+    nav a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Cours 5 : algorithmes avancés</h1>
+</header>
+<p>Pour ce cours ci, on se propose de présenter deux algorithmes complexes : le filter collect et un algorithme de préfixe.</p>
+<p>L’objectif est de présenter un peu plus la mécanique interne de rayon mais surtout d’écrire des algorithmes plus difficiles et de faire le lien entre l’analyse théorique et ce que l’on peut observer sur les logs d’exécution.</p>
+<h1 id="collect">Collect</h1>
+<p>On commence par examiner le <code>collect</code> parallèle de rayon. Cette opération est doublement générique : sur les itérateurs donnés en entrée et sur le type de structure construite en sortie.</p>
+<p>Pour la sortie, on s’intéresse ici uniquement aux vecteurs.</p>
+<p>Pour l’entrée on considère deux types d’itérateurs parallèles :</p>
+<ul>
+<li>les itérateurs <em>indicés</em> qui implémentent le trait <code>IndexedParallelIterator</code></li>
+<li>les itérateurs <em>non indicés</em> qui n’implémentent pas <code>IndexedParallelIterator</code> mais uniquement <code>ParallelIterator</code></li>
+</ul>
+<h2 id="cas-simple">Cas simple</h2>
+<p>On commence par les itérateurs indicés. Pour ce type d’itérateurs il est possible de numéroter tous les éléments en parallèle. Transformer l’itérateur en vecteur consiste donc juste à faire un <code>for</code> parallèle sur les indices et à réaliser toutes les affectations.</p>
+<p>On obtient par exemple le code suivant :</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> collect<span class="op">&lt;</span>I<span class="op">&gt;</span>(i<span class="op">:</span> I) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="pp">I::</span>Item<span class="op">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    I<span class="op">:</span> IndexedParallelIterator<span class="op">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> v <span class="op">=</span> <span class="dt">Vec</span><span class="pp">::</span>with_capacity(i<span class="op">.</span>len())<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">unsafe</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        v<span class="op">.</span>set_len(i<span class="op">.</span>len())<span class="op">;</span> <span class="co">// dangereux car v non initialise</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    v<span class="op">.</span>par_iter_mut()<span class="op">.</span>zip(i)<span class="op">.</span>for_each(<span class="op">|</span>(r<span class="op">,</span> e)<span class="op">|</span> <span class="kw">unsafe</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="pp">std::ptr::</span>write(r <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="pp">I::</span>Item<span class="op">,</span> e)<span class="op">;</span> <span class="co">// evite le drop sur le faux contenu de v</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    v</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Mis à part les <code>unsafe</code> le code est clair, comme l’itérateur <code>i</code> et celui sur le vecteur <code>v</code> sont tous deux indicés on peut les zipper pour réaliser toutes les affectations en parallèle. On peut même détailler encore un peu plus ce qui se passe en réécrivant le <code>for_each</code> à l’aide d’un <code>reduce</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    v<span class="op">.</span>par_iter_mut()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>zip(i)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>(r<span class="op">,</span> e)<span class="op">|</span> <span class="kw">unsafe</span> <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>            <span class="pp">std::ptr::</span>write(r <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="pp">I::</span>Item<span class="op">,</span> e)<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>reduce(<span class="op">||</span> ()<span class="op">,</span> <span class="op">|</span>_<span class="op">,</span> _<span class="op">|</span> ())<span class="op">;</span></span></code></pre></div>
+<p>Sur cet exemple, comme il s’agit simplement d’un reduce le travail est <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">W(n) = \Theta(n)</annotation></semantics></math> et la profondeur <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">D(n) = \Theta(\log(n))</annotation></semantics></math>.</p>
+<h2 id="cas-complexe">Cas complexe</h2>
+<p>On regarde maintenant le cas des itérateurs non-indicés. Tout d’abord, comment faire pour en obtenir un ? Tous les itérateurs basiques semblent en effet indicés (range, vecteur, …). Pour obtenir un itérateur non-indicé on va utiliser <code>filter</code>. En effet, en filtrant certains éléments de l’itérateur il devient impossible de prédire en parallèle les numéros de chacun des éléments restants. Pour notre exemple, on se propose simplement de filtrer un itérateur en ne gardant que les entiers pairs.</p>
+<p>On commence par le code séquentiel :</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">0</span><span class="op">..</span><span class="dv">100</span>)<span class="op">.</span>filter(<span class="op">|&amp;</span>e<span class="op">|</span> e <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>fold(<span class="dt">Vec</span><span class="pp">::</span>new()<span class="op">,</span> <span class="op">|</span><span class="kw">mut</span> v<span class="op">,</span> e<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>            v<span class="op">.</span>push(e)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>            v</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span></code></pre></div>
+<p>L’utilisation du <code>fold</code> ici nous indique qu’un état (le vecteur en cours de construction) est propagé à travers toutes les itérations. La parallélisation de ce code va donc s’avérer plus complexe qu’un simple passage aux itérateurs parallèles.</p>
+<h3 id="premier-algorithme">Premier algorithme</h3>
+<p>On fait un premier essai avec le code suivant :</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> filter_collect_1<span class="op">&lt;</span>I<span class="op">&gt;</span>(i<span class="op">:</span> I) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="pp">I::</span>Item<span class="op">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    I<span class="op">:</span> ParallelIterator<span class="op">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    i<span class="op">.</span>fold(<span class="dt">Vec</span><span class="pp">::</span>new<span class="op">,</span> <span class="op">|</span><span class="kw">mut</span> v<span class="op">,</span> e<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        v<span class="op">.</span>push(e)<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        v</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>reduce(<span class="dt">Vec</span><span class="pp">::</span>new<span class="op">,</span> <span class="op">|</span><span class="kw">mut</span> v1<span class="op">,</span> <span class="kw">mut</span> v2<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        v1<span class="op">.</span>append(<span class="op">&amp;</span><span class="kw">mut</span> v2)<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        v1</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>On part du code séquentiel et on passe à un itérateur parallèle. Le <code>fold</code> parallèle va s’appliquer sur chaque tâche et produire un vecteur pour chacune d’entre elles. On peut remarquer au passage que l’argument du <code>fold</code> n’est pas le même qu’en séquentiel : au lieu d’un seul vecteur (<code>Vec::new()</code>) on passe en argument la fonction qui permet de créer autant de vecteurs que l’on veut (<code>Vec::new</code>).</p>
+<p>Il reste ensuite à transformer toutes ces solutions partielles en une seule solution finale, ce qui est réalisé à l’aide du <code>reduce</code> en concaténant les différents vecteurs.</p>
+<p>Que vallent <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math> et <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math> sur notre code ?</p>
+<p>L’exécution du code pour un itérateur de 10 millions d’éléments nous donne le log suivant :</p>
+<figure>
+<img src="sans_liste.svg" alt="trace du filter collect (version 1)" /><figcaption aria-hidden="true">trace du filter collect (version 1)</figcaption>
+</figure>
+<p>On voit bien un bel arbre binaire qui correspond à une réduction. Le mécanisme de vol vu précédemment évite la création de toutes les tâches et l’arbre ne se développe ici que sur quelques niveaux.</p>
+<p>Le calcul de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math> revient à trouver la surface totale du graphe et le calcul de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math> la surface du chemin critique.</p>
+<p>Commençons par <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>. En haut du graphe se trouvent toutes les divisions mais leur coût est trop faible (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math>) pour avoir une importance. On trouve ensuite une grande ligne colorée composée de 2 tâches rouges et 8 tâches vertes.</p>
+<p>Cette ligne correspond aux opérations de <code>push</code>. Le travail total de la ligne est donc <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math> (au pire cas tous les éléments sont ajoutés). Tout le bas du graphe correspond aux opérations de réduction.</p>
+<p>On peut voir qu’initialement les coûts sont faibles mais qu’ils semblent doubler à chaque niveau. Ce comportement correspond à ce que l’on peut trouver en analysant le code: l’appel à <code>append</code> coûte en effet autant que la taille de <code>v2</code>. Comme on fusionne deux vecteurs de tailles identiques, la taille double pour le niveau suivant.</p>
+<p>Le travail total est alors de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>2</mn><mo>×</mo><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mi>/</mi><mn>2</mn><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">W(n) = 2 \times W(n/2) + \Theta(n) = \Theta(n\log(n))</annotation></semantics></math> (d’après le master theorem).</p>
+<p>Pour la profondeur on a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>D</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mi>/</mi><mn>2</mn><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">D(n) = D(n/2) + \Theta(n) = \Theta(n)</annotation></semantics></math>.</p>
+<p>Quelles conclusions tirer de cette analyse ?</p>
+<ul>
+<li>le coût du travail passe de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math> à <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">n\log(n)</annotation></semantics></math> ce qui signifie qu’il faut au moins <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">log(n)</annotation></semantics></math> cœurs pour retrouver les performances de l’algorithme séquentiel (la situation réelle est légèrement meilleure car tout l’arbre n’est pas développé). Ça pose tout de même un gros problème de performance.</li>
+<li>la profondeur est plus basse que le travail mais pas tant que ça. En particulier on voit bien le thread vert attendre lors de la dernière tâche.</li>
+</ul>
+<p>L’algo n’a donc pas l’air super <em>sur le papier</em>. En vrai en réalité la situation est encore pire car il y a beaucoup de contention sur le bus mémoire.</p>
+<h3 id="deuxième-algorithme">Deuxième algorithme</h3>
+<p>On reprend donc l’algorithme précédent pour l’améliorer un peu. Le problème vient ici du fait que beaucoup d’éléments sont re-déplacés à chaque niveau. Comme il y a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log(n)</annotation></semantics></math> niveaux et <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math> éléments, on arrive ainsi à notre coût de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">n\log(n)</annotation></semantics></math>.</p>
+<p>Ce que l’on va chercher à faire c’est de ne déplacer chaque élément qu’une seule fois. Pour ce faire, on va créer une liste chaînée de blocs composés de tous les vecteurs créés par toutes les tâches puis concaténer tous les blocs. La liste chaînée nous permet de fusionner deux sous-listes en <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> filter_collect_2<span class="op">&lt;</span>I<span class="op">&gt;</span>(i<span class="op">:</span> I) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="pp">I::</span>Item<span class="op">&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    I<span class="op">:</span> ParallelIterator<span class="op">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> l <span class="op">=</span> i</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>fold(<span class="dt">Vec</span><span class="pp">::</span>new<span class="op">,</span> <span class="op">|</span><span class="kw">mut</span> v<span class="op">,</span> e<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>            v<span class="op">.</span>push(e)<span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            v</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>v<span class="op">|</span> <span class="pp">std::iter::</span>once(v)<span class="op">.</span><span class="pp">collect::</span><span class="op">&lt;</span>LinkedList<span class="op">&lt;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="pp">I::</span>Item<span class="op">&gt;&gt;&gt;</span>())</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>reduce(<span class="pp">LinkedList::</span>new<span class="op">,</span> <span class="op">|</span><span class="kw">mut</span> l1<span class="op">,</span> <span class="kw">mut</span> l2<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            l1<span class="op">.</span>append(<span class="op">&amp;</span><span class="kw">mut</span> l2)<span class="op">;</span> <span class="co">// cout en O(1)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            l1</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)<span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> iter_liste <span class="op">=</span> l<span class="op">.</span>into_iter()<span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> premier <span class="op">=</span> iter_liste<span class="op">.</span>next()<span class="op">;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(premier) <span class="op">=</span> premier <span class="op">{</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        iter_liste<span class="op">.</span>fold(premier<span class="op">,</span> <span class="op">|</span><span class="kw">mut</span> v<span class="op">,</span> <span class="kw">mut</span> v2<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>            v<span class="op">.</span>append(<span class="op">&amp;</span><span class="kw">mut</span> v2)<span class="op">;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            v</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Vec</span><span class="pp">::</span>new()</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Toutes les concaténations de vecteurs sont ici réalisées complètement en séquentiel. On obtient la trace suivante :</p>
+<figure>
+<img src="avec_liste.svg" alt="trace du filter collect (version 2)" /><figcaption aria-hidden="true">trace du filter collect (version 2)</figcaption>
+</figure>
+<p>On voit bien ici les opérations de <code>push</code>, la réduction qui fusionne toutes les listes très rapidement et la fusion finale de tous les vecteurs (tout en bas).</p>
+<p>Le travail est ici <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">W(n) = \Theta(n)</annotation></semantics></math> ce qui correspond au coût de tous les <code>push</code> et de tous les re-déplacements. La réduction en elle même forme un arbre binaire dont tous les nœuds ont un coût 1 et de hauteur <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log(n)</annotation></semantics></math> ce qui donne également un coût de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math> (on aurait pu également résoudre <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>2</mn><mo>×</mo><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mi>/</mi><mn>2</mn><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">W(n) = 2\times W(n/2) + 1</annotation></semantics></math>).</p>
+<p>Pour la profondeur on a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mo>log</mo><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>Θ</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">D(n) = \Theta(\log(n) + n) = \Theta(n)</annotation></semantics></math> à cause des concaténations séquentielles.</p>
+<p>Au final le travail s’est donc amélioré. Il reste néanmoins des surcoûts par rapport à l’algorithme séquentiel, chaque élément étant déplacé deux fois au lieu d’une. En plus de ça, la profondeur implique un temps d’attente (ici du thread rouge) car elle est proche de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>.</p>
+<p>On pourrait paralléliser un peu plus en remplaçant <code>v.append(&amp;mut v2)</code> par <code>v.par_extend(v2)</code> mais il n’est pas sûr que cela amène des gains de performances car les déplacements font une utilisation intensive du bus mémoire.</p>
+<h1 id="préfixe">Préfixe</h1>
+<p>On passe maintenant à une implémentation d’un préfixe. Étant donné en entrée une tranche de tableau on cherche à remplacer chaque élément par la somme de tous les éléments jusqu’à lui.</p>
+<p>Par exemple le préfixe sur <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>3</mn><mo>,</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">1,2,3,4</annotation></semantics></math> donne <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mn>3</mn><mo>,</mo><mn>6</mn><mo>,</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">1,3,6,10</annotation></semantics></math>. On part sur l’algorithme suivant :</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> seq_prefixe(t<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> [<span class="dt">u64</span>]) <span class="op">-&gt;</span> <span class="dt">u64</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    t<span class="op">.</span>iter_mut()<span class="op">.</span>fold(<span class="dv">0</span><span class="op">,</span> <span class="op">|</span>s<span class="op">,</span> e<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>e <span class="op">+=</span> s<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>e</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> prefixe(t<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> [<span class="dt">u64</span>]) <span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> c <span class="op">=</span> (t<span class="op">.</span>len() <span class="kw">as</span> <span class="dt">f64</span>)<span class="op">.</span>sqrt()<span class="op">.</span>ceil() <span class="kw">as</span> <span class="dt">usize</span><span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> v<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">u64</span><span class="op">&gt;</span> <span class="op">=</span> t<span class="op">.</span>par_chunks_mut(c)<span class="op">.</span>map(seq_prefixe)<span class="op">.</span>collect()<span class="op">;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    seq_prefixe(<span class="op">&amp;</span><span class="kw">mut</span> v)<span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    t<span class="op">.</span>par_chunks_mut(c)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>skip(<span class="dv">1</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>zip(v<span class="op">.</span>par_iter())</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>for_each(<span class="op">|</span>(s<span class="op">,</span> l)<span class="op">|</span> s<span class="op">.</span>iter_mut()<span class="op">.</span>for_each(<span class="op">|</span>e<span class="op">|</span> <span class="op">*</span>e <span class="op">+=</span> <span class="op">*</span>l))<span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>On commence par couper la tranche en blocs de taille <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\sqrt(n)</annotation></semantics></math>. Sur chaque bloc, on calcule séquentiellement un préfixe, directement sur le bloc. On renvoie la somme du bloc et toutes ces sommes sont stockées dans le vecteur <code>v</code>. On réalise un préfixe séquentiel sur <code>v</code> puis chaque bloc est re-traité en parallèle pour mettre à jours les préfixes partiels.</p>
+<p>On obtient ainsi la trace suivante (lancée avec 4 threads) :</p>
+<figure>
+<img src="pf.svg" alt="trace du préfixe" /><figcaption aria-hidden="true">trace du préfixe</figcaption>
+</figure>
+<p>La tâche tout en haut correspond à la création initiale du vecteur. Elle ne fait pas vraiment partie de l’algorithme mais je l’ai laissé pour donner un ordre d’idée des temps de calcul. On voir bien les deux étapes parallèles de l’algorithme.</p>
+<p>Le travail est ici <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>×</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mo stretchy="false" form="prefix">(</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo>×</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>2</mn><mi>n</mi></mrow><annotation encoding="application/x-tex">W(n) = \sqrt(n)\times\sqrt(n) + \sqrt(n) + (\sqrt(n)-1)\times\sqrt(n) = 2n</annotation></semantics></math> (à peu près) ce qui est ok pour un préfixe.</p>
+<p>La profondeur est de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo stretchy="false" form="prefix">(</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msqrt><mi>(</mi></msqrt><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">D(n) = \sqrt(n) + \sqrt(n) + \sqrt(n)</annotation></semantics></math> ce qui est également ok car bien plus faible que le travail divisé par le nombre de cœurs. On pourrait paralléliser encore plus en s’appellant récursivement et en réalisant les mises-à jour en parallèle.</p>
+</body>
+</html>
