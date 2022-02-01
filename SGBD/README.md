@@ -7,7 +7,7 @@ List all tables on http://adminer.ensimag.fr.
 SELECT * FROM all_tables WHERE TABLESPACE_NAME='USERS';
 ```
 
-## TD Hotels.
+## TD Hotels.
 ```sql
 -- Q3
 SELECT DISTINCT NomS FROM RESORTS NATURAL JOIN HOTELS WHERE TypeS='mer' AND CatH='4'; 
@@ -112,7 +112,7 @@ select deptno from (select dept.deptno, count(empno) as emp_count from emp join 
 -- remplacer fetch first par min ou max
 ```
 
-## TD Transactions
+## TD Transactions
 
 Dans Oracle on est toujours dans une transaction.
 
