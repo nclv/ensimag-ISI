@@ -45,7 +45,7 @@ Technique importante : **répéter l'exécution d'un l'algo probabiliste sur une
 
 Analyse des algorithmes probabilistes: dénombrement, bornes de Chernov, techniques d'analyse récursive (exemple arbre ET-OU), ...
 
-# Links
+# Links
 
 - [Rust function signatures](https://hoverbear.org/blog/reading-rust-function-signatures/)
 - [Itérateurs parallèles](http://wagnerf.pages.ensimag.fr/algoa/cm4/resume.html)
